@@ -1,0 +1,103 @@
+﻿@model Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.NguoiDung
+
+@{
+    ViewBag.Title = "Chi Tiết Khách Hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid" style="max-width: 900px;">
+
+    <h2 style="font-weight:bold; margin-bottom:30px;">
+        👤 CHI TIẾT KHÁCH HÀNG
+    </h2>
+
+    <div class="panel panel-default">
+
+        <div class="panel-heading"
+             style="background:#ff9966; font-weight:bold; font-size:18px;">
+            Thông tin khách hàng
+        </div>
+
+        <div class="panel-body">
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <p>
+                        <strong>Mã khách hàng:</strong>
+                        #@Model.MaNguoiDung
+                    </p>
+
+                    <p>
+                        <strong>Họ và tên:</strong>
+                        @Model.HoTen
+                    </p>
+
+                    <p>
+                        <strong>Số điện thoại:</strong>
+                        @Model.SoDienThoai
+                    </p>
+                </div>
+
+                <div class="col-md-6">
+
+                    <p>
+                        <strong>Email:</strong>
+                        @(string.IsNullOrEmpty(Model.Email)
+                            ? "Chưa cập nhật"
+                            : Model.Email)
+                    </p>
+
+                    <p>
+                        <strong>Ngày tạo:</strong>
+
+                        @(Model.NgayTao.HasValue
+                            ? Model.NgayTao.Value.ToString("dd/MM/yyyy HH:mm")
+                            : "")
+                    </p>
+
+                    <p>
+                        <strong>Trạng thái:</strong>
+
+                        @if (Model.TrangThai == "Hoạt động")
+                        {
+                            <span class="label label-success">
+                                Hoạt động
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="label label-danger">
+                                Đã khóa
+                            </span>
+                        }
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="panel-footer">
+
+            <a href="@Url.Action("Index", "KhachHang")"
+               class="btn btn-default">
+
+                ← Quay lại
+
+            </a>
+
+            <a href="@Url.Action("Sua", "KhachHang",
+                        new { id = Model.MaNguoiDung })"
+               class="btn btn-primary">
+
+                ✏️ Sửa thông tin
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

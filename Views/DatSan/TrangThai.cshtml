@@ -1,0 +1,1014 @@
+﻿@model IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.DatSan>
+
+@{
+    ViewBag.Title = "Lịch Sử Đặt Sân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string vaiTro = Session["VaiTro"] != null
+        ? Session["VaiTro"].ToString()
+        : "";
+
+    bool laKhachHang = vaiTro == "KhachHang";
+    bool laNhanVien =
+        vaiTro == "NhanVien";
+
+    bool laAdmin =
+        vaiTro == "Admin";
+}
+
+<div class="container-fluid"
+     style="padding-left:30px;
+            padding-right:30px;
+            margin-top:25px;
+            margin-bottom:50px;">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-success"
+                style="font-weight:bold; margin-bottom:5px;">
+                <i class="glyphicon glyphicon-calendar"></i>
+                Lịch sử đặt sân
+            </h3>
+
+            <p class="text-muted" style="margin-bottom:10px;">
+                Theo dõi đơn đặt sân, thanh toán và yêu cầu hủy của bạn.
+            </p>
+
+            <hr style="margin-top:10px; margin-bottom:20px;" />
+        </div>
+    </div>
+
+    <!-- THÔNG BÁO -->
+    @if (TempData["ThanhCong"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="glyphicon glyphicon-ok"></i>
+            <b>@TempData["ThanhCong"]</b>
+        </div>
+    }
+
+    @if (TempData["Loi"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="glyphicon glyphicon-warning-sign"></i>
+            <b>@TempData["Loi"]</b>
+        </div>
+    }
+
+    <!-- CHÍNH SÁCH HỦY CHO KHÁCH HÀNG -->
+    @if (laKhachHang)
+    {
+        <div class="alert alert-info"
+             style="margin-bottom:20px; line-height:1.7;">
+            <b>
+                <i class="glyphicon glyphicon-info-sign"></i>
+                Chính sách hủy sân:
+            </b>
+            <br />
+
+            <span>
+                • Đơn chưa thanh toán: được tự hủy khi còn ít nhất
+                <b>2 giờ</b> trước giờ đá và không mất phí.
+            </span>
+            <br />
+
+            <span>
+                • Đơn đã thanh toán / đang chờ xác nhận:
+                khách hàng gửi <b>yêu cầu hủy</b> để nhân viên xử lý.
+            </span>
+            <br />
+
+            <span>
+                • Trước từ <b>24 giờ trở lên</b>:
+                phí dự kiến <b>0%</b>.
+                Từ <b>2 đến dưới 24 giờ</b>:
+                phí dự kiến <b>20%</b>.
+                Dưới <b>2 giờ</b>:
+                phí dự kiến <b>50%</b>.
+            </span>
+        </div>
+    }
+
+    <!-- DANH SÁCH ĐẶT SÂN -->
+    <div class="panel panel-primary"
+         style="box-shadow:0 2px 5px rgba(0,0,0,0.1);">
+
+        <div class="panel-heading"
+             style="padding:10px 15px;">
+
+            <h4 style="margin:0; font-size:16px;">
+                <b>
+                    <i class="glyphicon glyphicon-calendar"></i>
+                    Lịch sử đặt sân
+                </b>
+            </h4>
+        </div>
+
+        <div class="panel-body"
+             style="padding:15px;">
+
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive"
+                     style="overflow-x:auto; width:100%;">
+
+                    <table class="table table-bordered table-hover table-striped"
+                           style="font-size:13px;
+                                  margin-bottom:0;
+                                  min-width:1150px;">
+
+                        <thead>
+                            <tr class="active">
+                                <th class="text-center"
+                                    style="width:6%;">
+                                    Mã đặt
+                                </th>
+
+                                <th style="width:12%;">
+                                    Khách hàng
+                                </th>
+
+                                <th style="width:14%;">
+                                    Sân bóng
+                                </th>
+
+                                <th class="text-center"
+                                    style="width:10%;">
+                                    Ngày đá
+                                </th>
+
+                                <th class="text-center"
+                                    style="width:11%;">
+                                    Khung giờ
+                                </th>
+
+                                <th class="text-right"
+                                    style="width:11%;">
+                                    Tổng tiền
+                                </th>
+
+                                <th class="text-center"
+                                    style="width:12%;">
+                                    Thanh toán
+                                </th>
+
+                                <th class="text-center"
+                                    style="width:14%;">
+                                    Trạng thái
+                                </th>
+
+                                <th class="text-center"
+                                    style="width:16%; min-width:165px;">
+                                    Thao tác
+                                </th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                DateTime? thoiGianBatDau = null;
+                                DateTime? thoiGianKetThuc = null;
+                                double soGioConLai = 0;
+
+                                if (item.KhungGio != null)
+                                {
+                                    thoiGianBatDau =
+                                        item.NgayDat.Date
+                                            .Add(item.KhungGio.GioBatDau);
+
+                                    thoiGianKetThuc =
+                                        item.NgayDat.Date
+                                            .Add(item.KhungGio.GioKetThuc);
+
+                                    soGioConLai =
+                                        (thoiGianBatDau.Value - DateTime.Now)
+                                        .TotalHours;
+                                }
+
+                                bool daHuy =
+                                    item.TrangThai == "Đã hủy";
+
+                                bool dangYeuCauHuy =
+                                    item.TrangThai == "Yêu cầu hủy";
+
+                                bool hoanThanh =
+                                    item.TrangThai == "Hoàn thành";
+
+                                bool dangSuDung =
+                                    item.TrangThai == "Đang sử dụng";
+
+                                bool chuaDenGio =
+                                    thoiGianBatDau.HasValue &&
+                                    soGioConLai > 0;
+
+                                // Khi đã tới giờ bắt đầu hoặc đã qua giờ đá
+                                // thì khách hàng không còn thấy nút Hủy.
+                                bool daQuaGioBatDau =
+                                    thoiGianBatDau.HasValue &&
+                                    DateTime.Now >= thoiGianBatDau.Value;
+
+                                bool daKetThuc =
+                                    thoiGianKetThuc.HasValue &&
+                                    DateTime.Now >= thoiGianKetThuc.Value;
+
+                                bool duocHienNutHuy =
+                                    laKhachHang &&
+                                    !daHuy &&
+                                    !dangYeuCauHuy &&
+                                    !hoanThanh &&
+                                    !dangSuDung &&
+                                    !daQuaGioBatDau &&
+                                    !daKetThuc;
+
+                                bool xemNhuDaThanhToan =
+                                    item.TrangThaiThanhToan == "Đã thanh toán" ||
+                                    item.TrangThaiThanhToan == "Chờ xác nhận" ||
+                                    item.TrangThaiThanhToan == "Đã chuyển khoản";
+
+                                bool coTheThaoTacHuy =
+                                    laKhachHang &&
+                                    !daHuy &&
+                                    !dangYeuCauHuy &&
+                                    !hoanThanh &&
+                                    !dangSuDung &&
+                                    chuaDenGio;
+
+                                bool duocTuHuy =
+                                    coTheThaoTacHuy &&
+                                    !xemNhuDaThanhToan &&
+                                    soGioConLai >= 2;
+
+                                bool guiYeuCauHuy =
+                                    coTheThaoTacHuy &&
+                                    xemNhuDaThanhToan;
+
+                                bool quaSatGioKhongTuHuy =
+                                    coTheThaoTacHuy &&
+                                    !xemNhuDaThanhToan &&
+                                    soGioConLai < 2;
+
+                                decimal tongTien =
+                                    item.TongTien ?? 0m;
+
+                                decimal tyLePhiHuyDuKien = 0m;
+
+                                if (guiYeuCauHuy)
+                                {
+                                    if (soGioConLai >= 24)
+                                    {
+                                        tyLePhiHuyDuKien = 0m;
+                                    }
+                                    else if (soGioConLai >= 2)
+                                    {
+                                        tyLePhiHuyDuKien = 0.20m;
+                                    }
+                                    else
+                                    {
+                                        tyLePhiHuyDuKien = 0.50m;
+                                    }
+                                }
+
+                                decimal phiHuyDuKien =
+                                    Math.Round(
+                                        tongTien * tyLePhiHuyDuKien,
+                                        0,
+                                        MidpointRounding.AwayFromZero);
+
+                                decimal soTienHoanDuKien =
+                                    tongTien - phiHuyDuKien;
+
+                                if (soTienHoanDuKien < 0)
+                                {
+                                    soTienHoanDuKien = 0;
+                                }
+
+                                <tr>
+                                    <!-- MÃ ĐẶT -->
+                                    <td class="text-center"
+                                        style="vertical-align:middle;">
+                                        <b class="text-primary">
+                                            #@item.MaDatSan
+                                        </b>
+                                    </td>
+
+                                    <!-- KHÁCH HÀNG -->
+                                    <td style="vertical-align:middle;">
+                                        @if (item.NguoiDung != null)
+                                        {
+                                            @item.NguoiDung.HoTen
+                                        }
+                                        else if (!string.IsNullOrWhiteSpace(item.HoTenKhachHang))
+                                        {
+                                            <span>
+                                                @item.HoTenKhachHang
+                                            </span>
+
+                                            if (!string.IsNullOrWhiteSpace(item.SoDienThoaiKhachHang))
+                                            {
+                                                <br />
+                                                <small class="text-muted">
+                                                    @item.SoDienThoaiKhachHang
+                                                </small>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Không có thông tin
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- SÂN BÓNG -->
+                                    <td style="vertical-align:middle;">
+                                        @if (item.SanBong != null)
+                                        {
+                                            <b class="text-success">
+                                                @item.SanBong.TenSan
+                                            </b>
+
+                                            <br />
+
+                                            <span class="label label-info"
+                                                  style="font-size:11px;">
+                                                @item.SanBong.LoaiSan
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Không có thông tin
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- NGÀY ĐÁ -->
+                                    <td class="text-center"
+                                        style="vertical-align:middle;">
+                                        @item.NgayDat.ToString("dd/MM/yyyy")
+                                    </td>
+
+                                    <!-- KHUNG GIỜ -->
+                                    <td class="text-center"
+                                        style="vertical-align:middle;">
+
+                                        @if (item.KhungGio != null)
+                                        {
+                                            @item.KhungGio.GioBatDau.ToString(@"hh\:mm")
+                                            @: -
+                                            @item.KhungGio.GioKetThuc.ToString(@"hh\:mm")
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Không có thông tin
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- TỔNG TIỀN -->
+                                    <td class="text-right"
+                                        style="vertical-align:middle;">
+                                        <b class="text-danger">
+                                            @String.Format("{0:N0}", item.TongTien) VNĐ
+                                        </b>
+                                    </td>
+
+                                    <!-- TRẠNG THÁI THANH TOÁN -->
+                                    <td class="text-center"
+                                        style="vertical-align:middle;">
+
+                                        @if (item.TrangThaiThanhToan == "Đã thanh toán")
+                                        {
+                                            <span class="label label-success"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-ok"></i>
+                                                Đã thanh toán
+                                            </span>
+                                        }
+                                        else if (item.TrangThaiThanhToan == "Chờ xác nhận")
+                                        {
+                                            <span class="label label-info"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-hourglass"></i>
+                                                Chờ xác nhận
+                                            </span>
+                                        }
+                                        else if (item.TrangThaiThanhToan == "Đã chuyển khoản")
+                                        {
+                                            <span class="label label-info"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-transfer"></i>
+                                                Chờ xác nhận
+                                            </span>
+                                        }
+                                        else if (item.TrangThaiThanhToan == "Hết hạn")
+                                        {
+                                            <span class="label label-danger"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-remove-circle"></i>
+                                                Hết hạn
+                                            </span>
+                                        }
+                                        else if (item.TrangThaiThanhToan == "Đã hủy")
+                                        {
+                                            <span class="label label-default"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-ban-circle"></i>
+                                                Đã hủy
+                                            </span>
+                                        }
+                                        else if (item.TrangThaiThanhToan == "Thanh toán trực tiếp tại sân")
+                                        {
+                                            <span class="label label-primary"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-user"></i>
+                                                Thanh toán tại sân
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-warning"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-time"></i>
+                                                Chưa thanh toán
+                                            </span>
+                                        }
+                                    </td>
+
+                                    <!-- TRẠNG THÁI ĐẶT SÂN -->
+                                    <td class="text-center"
+                                        style="vertical-align:middle;">
+
+                                        @if (item.TrangThai == "Đã xác nhận")
+                                        {
+                                            <span class="label label-success"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-ok"></i>
+                                                Đã xác nhận
+                                            </span>
+                                        }
+                                        else if (item.TrangThai == "Chờ xác nhận")
+                                        {
+                                            <span class="label label-info"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-hourglass"></i>
+                                                Chờ xác nhận
+                                            </span>
+                                        }
+                                        else if (item.TrangThai == "Chờ thanh toán")
+                                        {
+                                            <span class="label label-warning"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-time"></i>
+                                                Chờ thanh toán
+                                            </span>
+                                        }
+                                        else if (item.TrangThai == "Yêu cầu hủy")
+                                        {
+                                            <span class="label label-warning"
+                                                  style="font-size:11px;
+                                                         background:#f0ad4e;">
+                                                <i class="glyphicon glyphicon-hourglass"></i>
+                                                Đang chờ hủy
+                                            </span>
+                                        }
+                                        else if (item.TrangThai == "Đã hủy")
+                                        {
+                                            <span class="label label-danger"
+                                                  style="font-size:11px;">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                                Đã hủy
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-default"
+                                                  style="font-size:11px;">
+                                                @item.TrangThai
+                                            </span>
+                                        }
+
+                                        <!-- THÔNG TIN HỦY / HOÀN TIỀN -->
+                                        @if (item.TrangThai == "Yêu cầu hủy" ||
+                                             item.TrangThai == "Đã hủy")
+                                        {
+                                            <div style="margin-top:7px;
+                                                        font-size:11px;
+                                                        line-height:1.6;
+                                                        text-align:left;">
+
+                                                @if (item.NgayYeuCauHuy.HasValue)
+                                                {
+                                                    <div>
+                                                        <b>Yêu cầu:</b>
+                                                        @item.NgayYeuCauHuy.Value.ToString("dd/MM/yyyy HH:mm")
+                                                    </div>
+                                                }
+
+                                                @if (item.NgayHuy.HasValue)
+                                                {
+                                                    <div>
+                                                        <b>Ngày hủy:</b>
+                                                        @item.NgayHuy.Value.ToString("dd/MM/yyyy HH:mm")
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrWhiteSpace(item.LyDoHuy))
+                                                {
+                                                    <div title="@item.LyDoHuy">
+                                                        <b>Lý do:</b>
+                                                        @item.LyDoHuy
+                                                    </div>
+                                                }
+
+                                                @if (item.PhiHuy.HasValue)
+                                                {
+                                                    <div>
+                                                        <b>Phí hủy:</b>
+                                                        <span class="text-danger">
+                                                            @item.PhiHuy.Value.ToString("N0") VNĐ
+                                                        </span>
+                                                    </div>
+                                                }
+
+                                                @if (item.SoTienHoan.HasValue)
+                                                {
+                                                    <div>
+                                                        <b>Hoàn dự kiến:</b>
+                                                        <span class="text-success">
+                                                            @item.SoTienHoan.Value.ToString("N0") VNĐ
+                                                        </span>
+                                                    </div>
+                                                }
+
+                                                @if (!string.IsNullOrWhiteSpace(item.TrangThaiHoanTien))
+                                                {
+                                                    <div>
+                                                        <b>Hoàn tiền:</b>
+                                                        @item.TrangThaiHoanTien
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </td>
+
+                                    <!-- THAO TÁC -->
+                                    <td class="text-center"
+                                        style="white-space:nowrap;
+                                               vertical-align:middle;">
+
+                                        <!-- XEM CHI TIẾT -->
+                                        <a href="@Url.Action(
+                                                    "ChiTiet",
+                                                    "DatSan",
+                                                    new { id = item.MaDatSan })"
+                                           class="btn btn-info btn-xs"
+                                           style="padding:3px 7px;
+                                                  font-size:11px;">
+                                            <i class="glyphicon glyphicon-eye-open"></i>
+                                            Xem
+                                        </a>
+
+                                        <!-- KHÁCH HÀNG: NÚT HỦY
+                                             - Nếu còn được hủy: nút đỏ và bấm được.
+                                             - Nếu không còn được hủy: nút vẫn hiện nhưng mờ và bị disabled. -->
+                                        @if (duocHienNutHuy)
+                                        {
+                                            using (Html.BeginForm(
+                                                "HuyDonKhachHang",
+                                                "DatSan",
+                                                FormMethod.Post,
+                                                new
+                                                {
+                                                    @class = "form-huy-don",
+                                                    style = "display:inline-block; margin-left:3px; margin-bottom:0;"
+                                                }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@item.MaDatSan" />
+
+                                                <input type="hidden"
+                                                       name="lyDo"
+                                                       class="ly-do-huy" />
+
+                                                <button type="submit"
+                                                        class="btn btn-danger btn-xs"
+                                                        style="padding:3px 7px; font-size:11px;"
+                                                        data-kieu="@(xemNhuDaThanhToan ? "yeu-cau-huy" : "huy-truc-tiep")"
+                                                        data-ma-don="@item.MaDatSan"
+                                                        data-ty-le="@((tyLePhiHuyDuKien * 100).ToString("0"))"
+                                                        data-phi="@phiHuyDuKien.ToString("N0")"
+                                                        data-hoan="@soTienHoanDuKien.ToString("N0")">
+
+                                                    <i class="glyphicon glyphicon-remove"></i>
+                                                    Hủy
+
+                                                </button>
+                                            }
+                                        }
+                                        else if (laKhachHang)
+                                        {
+                                            string lyDoKhongTheHuy = "Đơn hiện không thể hủy.";
+
+                                            if (daHuy)
+                                            {
+                                                lyDoKhongTheHuy = "Đơn đã được hủy.";
+                                            }
+                                            else if (dangYeuCauHuy)
+                                            {
+                                                lyDoKhongTheHuy = "Đơn đang chờ Nhân viên xử lý yêu cầu hủy.";
+                                            }
+                                            else if (hoanThanh)
+                                            {
+                                                lyDoKhongTheHuy = "Đơn đã hoàn thành nên không thể hủy.";
+                                            }
+                                            else if (dangSuDung)
+                                            {
+                                                lyDoKhongTheHuy = "Sân đang được sử dụng nên không thể hủy.";
+                                            }
+                                            else if (daKetThuc)
+                                            {
+                                                lyDoKhongTheHuy = "Trận đã kết thúc nên không thể hủy.";
+                                            }
+                                            else if (daQuaGioBatDau)
+                                            {
+                                                lyDoKhongTheHuy = "Đã tới giờ đá nên không thể hủy.";
+                                            }
+
+                                            <button type="button"
+                                                    class="btn btn-danger btn-xs"
+                                                    disabled="disabled"
+                                                    title="@lyDoKhongTheHuy"
+                                                    style="
+                                                        padding:3px 7px;
+                                                        font-size:11px;
+                                                        margin-left:3px;
+                                                        opacity:0.38;
+                                                        cursor:not-allowed;
+                                                        pointer-events:auto;">
+
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                                Hủy
+
+                                            </button>
+                                        }
+
+                                        <!-- ĐANG CHỜ NHÂN VIÊN XỬ LÝ HỦY -->
+                                        @if (laKhachHang && dangYeuCauHuy)
+                                        {
+                                            <span class="label label-warning"
+                                                  style="display:inline-block;
+                                                         margin-left:3px;
+                                                         padding:5px 7px;">
+                                                <i class="glyphicon glyphicon-hourglass"></i>
+                                                Chờ xử lý hủy
+                                            </span>
+                                        }
+
+                                        <!-- NHÂN VIÊN: XỬ LÝ YÊU CẦU HỦY -->
+                                        @if (laNhanVien &&
+                                             item.TrangThai == "Yêu cầu hủy")
+                                        {
+                                            <div style="margin-top:6px;"></div>
+
+                                            using (Html.BeginForm(
+                                                "DuyetYeuCauHuy",
+                                                "DatSan",
+                                                new { id = item.MaDatSan },
+                                                FormMethod.Post,
+                                                new
+                                                {
+                                                    style = "display:inline-block; margin-left:3px;",
+                                                    onsubmit = "return confirm('Chấp nhận yêu cầu hủy đơn này? Dịch vụ sẽ được hoàn lại kho và đơn chuyển sang Đã hủy.');"
+                                                }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-success btn-xs"
+                                                        style="padding:3px 7px; font-size:11px;">
+                                                    <i class="glyphicon glyphicon-ok"></i>
+                                                    Chấp nhận hủy
+                                                </button>
+                                            }
+
+                                            using (Html.BeginForm(
+                                                "TuChoiYeuCauHuy",
+                                                "DatSan",
+                                                FormMethod.Post,
+                                                new
+                                                {
+                                                    @class = "form-tu-choi-huy",
+                                                    style = "display:inline-block; margin-left:3px;"
+                                                }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="id"
+                                                       value="@item.MaDatSan" />
+
+                                                <input type="hidden"
+                                                       name="lyDoTuChoi"
+                                                       class="ly-do-tu-choi" />
+
+                                                <button type="submit"
+                                                        class="btn btn-default btn-xs"
+                                                        style="padding:3px 7px; font-size:11px;"
+                                                        data-ma-don="@item.MaDatSan">
+                                                    <i class="glyphicon glyphicon-ban-circle"></i>
+                                                    Từ chối hủy
+                                                </button>
+                                            }
+
+                                            <div style="font-size:10px;
+                                                        color:#777;
+                                                        margin-top:5px;
+                                                        white-space:normal;
+                                                        line-height:1.5;">
+                                                Phí hủy:
+                                                <b class="text-danger">
+                                                    @((item.PhiHuy ?? 0m).ToString("N0")) VNĐ
+                                                </b>
+                                                <br />
+                                                Hoàn dự kiến:
+                                                <b class="text-success">
+                                                    @((item.SoTienHoan ?? 0m).ToString("N0")) VNĐ
+                                                </b>
+                                            </div>
+                                        }
+
+                                        <!-- NHÂN VIÊN: XÁC NHẬN ĐÃ HOÀN TIỀN -->
+                                        @if (laNhanVien &&
+                                             item.TrangThai == "Đã hủy" &&
+                                             item.TrangThaiHoanTien == "Chờ hoàn tiền")
+                                        {
+                                            <div style="margin-top:6px;"></div>
+
+                                            using (Html.BeginForm(
+                                                "XacNhanHoanTien",
+                                                "DatSan",
+                                                new { id = item.MaDatSan },
+                                                FormMethod.Post,
+                                                new
+                                                {
+                                                    style = "display:inline-block; margin-left:3px;",
+                                                    onsubmit = "return confirm('Xác nhận đã hoàn tiền cho khách hàng?');"
+                                                }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-primary btn-xs"
+                                                        style="padding:3px 7px; font-size:11px;">
+                                                    <i class="glyphicon glyphicon-usd"></i>
+                                                    Đã hoàn tiền
+                                                </button>
+                                            }
+                                        }
+
+                                        <!-- NHÂN VIÊN XÁC NHẬN THANH TOÁN -->
+                                        @if (laNhanVien &&
+                                             item.TrangThai != "Yêu cầu hủy" &&
+                                             item.TrangThai != "Đã hủy" &&
+                                             item.TrangThaiThanhToan == "Chờ xác nhận")
+                                        {
+                                            using (Html.BeginForm(
+                                                "XacNhanThanhToan",
+                                                "DatSan",
+                                                new { id = item.MaDatSan },
+                                                FormMethod.Post,
+                                                new
+                                                {
+                                                    style = "display:inline-block; margin-left:3px;",
+                                                    onsubmit = "return confirm('Bạn xác nhận đã nhận được tiền chuyển khoản của khách hàng?');"
+                                                }))
+                                            {
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-success btn-xs">
+                                                    <i class="glyphicon glyphicon-ok"></i>
+                                                    Xác nhận
+                                                </button>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-info text-center"
+                     style="margin:20px 0;">
+
+                    <i class="glyphicon glyphicon-info-sign"></i>
+                    <b>Bạn chưa có đơn đặt sân nào.</b>
+
+                    <br />
+
+                    <a href="@Url.Action("Index", "DatSan")"
+                       class="btn btn-primary btn-sm"
+                       style="margin-top:10px;">
+
+                        <i class="glyphicon glyphicon-plus"></i>
+                        Đặt sân ngay
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- NÚT QUAY LẠI -->
+    <div class="row"
+         style="margin-top:15px;">
+
+        <div class="col-md-12">
+            <a href="@Url.Action("Index", "DatSan")"
+               class="btn btn-default btn-sm">
+
+                <i class="glyphicon glyphicon-arrow-left"></i>
+                QUAY LẠI ĐẶT SÂN
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- XỬ LÝ NHẬP LÝ DO HỦY -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var forms =
+            document.querySelectorAll(".form-huy-don");
+
+        for (var i = 0; i < forms.length; i++) {
+
+            forms[i].addEventListener("submit", function (e) {
+
+                var form = this;
+
+                var button =
+                    form.querySelector(
+                        "button[type='submit']"
+                    );
+
+                var inputLyDo =
+                    form.querySelector(
+                        ".ly-do-huy"
+                    );
+
+                var kieu =
+                    button.getAttribute("data-kieu");
+
+                var maDon =
+                    button.getAttribute("data-ma-don");
+
+                var lyDo = prompt(
+                    "Vui lòng nhập lý do hủy đơn #" +
+                    maDon +
+                    ":"
+                );
+
+                if (lyDo === null) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                lyDo = lyDo.trim();
+
+                if (lyDo.length === 0) {
+                    alert(
+                        "Bạn phải nhập lý do hủy."
+                    );
+
+                    e.preventDefault();
+                    return false;
+                }
+
+                if (lyDo.length > 500) {
+                    alert(
+                        "Lý do hủy không được vượt quá 500 ký tự."
+                    );
+
+                    e.preventDefault();
+                    return false;
+                }
+
+                var noiDungXacNhan = "";
+
+                if (kieu === "huy-truc-tiep") {
+
+                    noiDungXacNhan =
+                        "Đơn chưa thanh toán và còn đủ thời gian hủy.\n\n" +
+                        "Bạn sẽ KHÔNG mất phí hủy.\n\n" +
+                        "Bạn có chắc chắn muốn hủy đơn #" +
+                        maDon +
+                        " không?";
+                }
+                else {
+
+                    var tyLe =
+                        button.getAttribute("data-ty-le");
+
+                    var phi =
+                        button.getAttribute("data-phi");
+
+                    var hoan =
+                        button.getAttribute("data-hoan");
+
+                    noiDungXacNhan =
+                        "Đơn này đã thanh toán hoặc đang chờ xác nhận thanh toán.\n\n" +
+                        "Phí hủy dự kiến: " +
+                        tyLe +
+                        "% (" +
+                        phi +
+                        " VNĐ)\n" +
+                        "Số tiền hoàn dự kiến: " +
+                        hoan +
+                        " VNĐ\n\n" +
+                        "Đây mới là YÊU CẦU HỦY. Nhân viên sẽ kiểm tra và xử lý.\n\n" +
+                        "Bạn có muốn gửi yêu cầu hủy đơn #" +
+                        maDon +
+                        " không?";
+                }
+
+                var dongY =
+                    confirm(noiDungXacNhan);
+
+                if (!dongY) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                inputLyDo.value = lyDo;
+            });
+        }
+
+        // Nhân viên nhập lý do khi từ chối yêu cầu hủy
+        var formsTuChoi =
+            document.querySelectorAll(".form-tu-choi-huy");
+
+        for (var j = 0; j < formsTuChoi.length; j++) {
+
+            formsTuChoi[j].addEventListener("submit", function (e) {
+
+                var form = this;
+
+                var button =
+                    form.querySelector(
+                        "button[type='submit']"
+                    );
+
+                var maDon =
+                    button.getAttribute("data-ma-don");
+
+                var lyDo = prompt(
+                    "Nhập lý do từ chối yêu cầu hủy đơn #" +
+                    maDon +
+                    ":"
+                );
+
+                if (lyDo === null) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                lyDo = lyDo.trim();
+
+                if (lyDo.length === 0) {
+                    alert("Bạn phải nhập lý do từ chối.");
+                    e.preventDefault();
+                    return false;
+                }
+
+                if (lyDo.length > 500) {
+                    alert("Lý do từ chối không được vượt quá 500 ký tự.");
+                    e.preventDefault();
+                    return false;
+                }
+
+                if (!confirm(
+                    "Bạn có chắc chắn muốn từ chối yêu cầu hủy đơn #" +
+                    maDon +
+                    " không?"
+                )) {
+                    e.preventDefault();
+                    return false;
+                }
+
+                form.querySelector(
+                    ".ly-do-tu-choi"
+                ).value = lyDo;
+            });
+        }
+    });
+</script>

@@ -1,0 +1,752 @@
+﻿@using System.Linq
+@using System.Web
+@using System.Collections.Generic
+
+@model IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.DatSan>
+
+@{
+    ViewBag.Title = "Thanh toán nhiều sân";
+
+    // =========================================================
+    // DANH SÁCH ĐƠN
+    // =========================================================
+    var danhSach = Model != null
+        ? Model.ToList()
+        : new List<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.DatSan>();
+
+    // =========================================================
+    // TỔNG TIỀN
+    // =========================================================
+    decimal tongTien = danhSach.Sum(x => x.TongTien ?? 0);
+
+    // Ví dụ: 15,16,17
+    string danhSachId = string.Join(
+        ",",
+        danhSach.Select(x => x.MaDatSan)
+    );
+
+    // Dùng cho nội dung chuyển khoản: 15-16-17
+    string danhSachIdNoiDung = string.Join(
+        "-",
+        danhSach.Select(x => x.MaDatSan)
+    );
+
+
+    // =========================================================
+    // THÔNG TIN TÀI KHOẢN NGÂN HÀNG
+    // =========================================================
+    // !!! THAY 3 THÔNG TIN NÀY BẰNG TÀI KHOẢN CỦA BẠN !!!
+    //
+    // Ví dụ:
+    // bankId = "MB";
+    // soTaiKhoan = "0123456789";
+    // tenChuTaiKhoan = "NGUYEN VAN A";
+
+    string bankId = "MB";               // <-- SỬA NGÂN HÀNG
+    string soTaiKhoan = "0332377968";   // <-- SỬA SỐ TÀI KHOẢN
+    string tenChuTaiKhoan = "LE THUY LINH"; // <-- SỬA TÊN CHỦ TK
+
+
+    // =========================================================
+    // NỘI DUNG CHUYỂN KHOẢN
+    // =========================================================
+    string noiDungChuyenKhoan =
+        "DAT SAN " + danhSachIdNoiDung;
+
+
+    // =========================================================
+    // TẠO QR CHUYỂN KHOẢN ĐỘNG
+    // =========================================================
+    // Khi người dùng quét:
+    // - Tự hiện số tài khoản
+    // - Tự hiện số tiền
+    // - Tự hiện nội dung chuyển khoản
+
+    string qrUrl =
+        "https://img.vietqr.io/image/" +
+        bankId + "-" +
+        soTaiKhoan +
+        "-compact2.png" +
+        "?amount=" + ((long)tongTien) +
+        "&addInfo=" + HttpUtility.UrlEncode(noiDungChuyenKhoan) +
+        "&accountName=" + HttpUtility.UrlEncode(tenChuTaiKhoan);
+}
+
+
+<div class="container-fluid"
+     style="
+        padding-left:30px;
+        padding-right:30px;
+        padding-top:20px;
+        padding-bottom:40px;">
+
+
+    <!-- ===================================================== -->
+    <!-- THÔNG TIN CÁC SÂN ĐÃ ĐẶT -->
+    <!-- ===================================================== -->
+
+    <div class="panel panel-primary">
+
+        <div class="panel-heading">
+
+            <h3 class="panel-title">
+
+                <i class="glyphicon glyphicon-list-alt"></i>
+
+                Thông tin các sân đã đặt
+
+            </h3>
+
+        </div>
+
+
+        <div class="panel-body">
+
+            @if (!danhSach.Any())
+            {
+                <div class="alert alert-warning text-center">
+
+                    <strong>
+                        Không có đơn đặt sân nào để thanh toán.
+                    </strong>
+
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+
+                    <table class="table table-bordered table-hover">
+
+                        <thead>
+
+                            <tr class="active">
+
+                                <th class="text-center">
+                                    Mã đặt sân
+                                </th>
+
+                                <th>
+                                    Tên sân
+                                </th>
+
+                                <th>
+                                    Loại sân
+                                </th>
+
+                                <th class="text-center">
+                                    Ngày đặt
+                                </th>
+
+                                <th class="text-center">
+                                    Khung giờ
+                                </th>
+
+                                <th class="text-right">
+                                    Giá
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var item in danhSach)
+                            {
+                                <tr>
+
+                                    <td class="text-center">
+
+                                        <strong class="text-primary">
+                                            #@item.MaDatSan
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (item.SanBong != null)
+                                        {
+                                            <strong>
+                                                @item.SanBong.TenSan
+                                            </strong>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Không có thông tin
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (item.SanBong != null)
+                                        {
+                                            @item.SanBong.LoaiSan
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        @item.NgayDat.ToString("dd/MM/yyyy")
+
+                                    </td>
+
+
+                                    <td class="text-center">
+
+                                        @if (item.KhungGio != null)
+                                        {
+                                            <span>
+
+                                                <i class="glyphicon glyphicon-time"></i>
+
+                                                @item.KhungGio.GioBatDau.ToString(@"hh\:mm")
+
+                                                -
+
+                                                @item.KhungGio.GioKetThuc.ToString(@"hh\:mm")
+
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td class="text-right">
+
+                                        <strong class="text-danger">
+
+                                            @String.Format(
+                                                "{0:N0} VNĐ",
+                                                item.TongTien ?? 0
+                                            )
+
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ===================================================== -->
+    <!-- TỔNG TIỀN -->
+    <!-- ===================================================== -->
+
+    @if (danhSach.Any())
+    {
+        <div class="alert alert-success text-right"
+             style="padding:20px;">
+
+            <div style="
+                    font-size:17px;
+                    margin-bottom:5px;">
+
+                TỔNG SỐ TIỀN CẦN THANH TOÁN
+
+            </div>
+
+
+            <div style="
+                    font-size:32px;
+                    font-weight:bold;"
+                 class="text-danger">
+
+                @String.Format(
+                    "{0:N0} VNĐ",
+                    tongTien
+                )
+
+            </div>
+
+        </div>
+    }
+
+
+
+    <!-- ===================================================== -->
+    <!-- CHỌN PHƯƠNG THỨC THANH TOÁN -->
+    <!-- ===================================================== -->
+
+    @if (danhSach.Any())
+    {
+        <div class="panel panel-default">
+
+            <div class="panel-heading">
+
+                <h3 class="panel-title">
+
+                    <i class="glyphicon glyphicon-credit-card"></i>
+
+                    Chọn phương thức thanh toán
+
+                </h3>
+
+            </div>
+
+
+            <div class="panel-body">
+
+                <div class="row">
+
+
+                    <!-- ================================================= -->
+                    <!-- CHUYỂN KHOẢN -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <div class="panel panel-info">
+
+                            <div class="panel-heading text-center">
+
+                                <h2 style="margin:10px 0;">
+
+                                    <i class="glyphicon glyphicon-qrcode"></i>
+
+                                    Chuyển khoản
+
+                                </h2>
+
+                            </div>
+
+
+                            <div class="panel-body text-center">
+
+
+                                <p style="font-size:16px;">
+
+                                    Thanh toán bằng chuyển khoản ngân hàng.
+
+                                </p>
+
+
+                                <p style="font-size:16px;">
+
+                                    Mở ứng dụng ngân hàng và quét mã QR bên dưới.
+
+                                </p>
+
+
+
+                                <!-- ===================================== -->
+                                <!-- QR THANH TOÁN ĐỘNG -->
+                                <!-- ===================================== -->
+
+                                <div style="
+                                        margin-top:20px;
+                                        margin-bottom:20px;">
+
+                                    <img src="@qrUrl"
+                                         alt="QR thanh toán"
+                                         id="qrThanhToan"
+                                         style="
+                                            width:300px;
+                                            height:auto;
+                                            max-width:100%;
+                                            padding:10px;
+                                            border:1px solid #ddd;
+                                            border-radius:10px;
+                                            background:#fff;" />
+
+                                </div>
+
+
+
+                                <!-- ===================================== -->
+                                <!-- SỐ TIỀN -->
+                                <!-- ===================================== -->
+
+                                <div class="alert alert-danger"
+                                     style="
+                                        max-width:450px;
+                                        margin:15px auto;">
+
+                                    <div style="
+                                            font-size:15px;
+                                            margin-bottom:5px;">
+
+                                        SỐ TIỀN CHUYỂN KHOẢN
+
+                                    </div>
+
+
+                                    <div style="
+                                            font-size:28px;
+                                            font-weight:bold;">
+
+                                        @String.Format(
+                                            "{0:N0} VNĐ",
+                                            tongTien
+                                        )
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <!-- ===================================== -->
+                                <!-- THÔNG TIN CHUYỂN KHOẢN -->
+                                <!-- ===================================== -->
+
+                                <div class="well"
+                                     style="
+                                        max-width:450px;
+                                        margin:15px auto;
+                                        text-align:left;">
+
+                                    <p>
+
+                                        <strong>
+                                            Ngân hàng:
+                                        </strong>
+
+                                        @bankId
+
+                                    </p>
+
+
+                                    <p>
+
+                                        <strong>
+                                            Số tài khoản:
+                                        </strong>
+
+                                        <span style="font-size:17px;">
+                                            @soTaiKhoan
+                                        </span>
+
+                                    </p>
+
+
+                                    <p>
+
+                                        <strong>
+                                            Chủ tài khoản:
+                                        </strong>
+
+                                        @tenChuTaiKhoan
+
+                                    </p>
+
+
+                                    <hr />
+
+
+                                    <p style="margin-bottom:5px;">
+
+                                        <strong>
+                                            Nội dung chuyển khoản:
+                                        </strong>
+
+                                    </p>
+
+
+                                    <div class="alert alert-info"
+                                         style="
+                                            margin-bottom:0;
+                                            font-size:18px;
+                                            font-weight:bold;
+                                            text-align:center;">
+
+                                        @noiDungChuyenKhoan
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <div class="alert alert-warning"
+                                     style="
+                                        max-width:450px;
+                                        margin:15px auto;">
+
+                                    <strong>
+                                        <i class="glyphicon glyphicon-warning-sign"></i>
+                                        Lưu ý
+                                    </strong>
+
+                                    <br />
+
+                                    Vui lòng chuyển đúng số tiền và
+                                    không thay đổi nội dung chuyển khoản.
+
+                                </div>
+
+
+
+                                <!-- ===================================== -->
+                                <!-- NÚT XÁC NHẬN ĐÃ CHUYỂN -->
+                                <!-- ===================================== -->
+
+                                @using (
+                                    Html.BeginForm(
+                                        "XacNhanChuyenKhoan",
+                                        "DatSan",
+                                        FormMethod.Post,
+                                        new
+                                        {
+                                            id = "formChuyenKhoan"
+                                        }
+                                    )
+                                )
+                                {
+                                    @Html.AntiForgeryToken()
+
+
+                                    <input type="hidden"
+                                           name="danhSachIdGop"
+                                           value="@danhSachId" />
+
+
+                                    <button type="submit"
+                                            class="btn btn-primary btn-lg"
+                                            style="
+                                                min-width:230px;
+                                                font-weight:bold;"
+                                            onclick="
+                                                return confirm(
+                                                    'Bạn xác nhận đã thực hiện chuyển khoản?'
+                                                );
+                                            ">
+
+                                        <i class="glyphicon glyphicon-ok"></i>
+
+                                        TÔI ĐÃ THANH TOÁN
+
+                                    </button>
+                                }
+
+
+                                <p class="text-muted"
+                                   style="
+                                        margin-top:15px;
+                                        font-size:13px;">
+
+                                    Chỉ bấm nút sau khi bạn đã thực hiện
+                                    chuyển khoản thành công.
+
+                                </p>
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- THANH TOÁN TRỰC TIẾP -->
+                    <!-- ================================================= -->
+
+                    <div class="col-md-6">
+
+                        <div class="panel panel-success">
+
+                            <div class="panel-heading text-center">
+
+                                <h2 style="margin:10px 0;">
+
+                                    <i class="glyphicon glyphicon-home"></i>
+
+                                    Thanh toán trực tiếp
+
+                                </h2>
+
+                            </div>
+
+
+                            <div class="panel-body text-center">
+
+
+                                <p style="font-size:16px;">
+
+                                    Thanh toán trực tiếp tại sân bóng.
+
+                                </p>
+
+
+                                <p style="font-size:16px;">
+
+                                    Bạn cần thanh toán trước thời hạn quy định.
+
+                                </p>
+
+
+
+                                <!-- SỐ TIỀN -->
+
+                                <div class="alert alert-success"
+                                     style="
+                                        max-width:450px;
+                                        margin:20px auto;">
+
+                                    <div>
+
+                                        SỐ TIỀN CẦN THANH TOÁN
+
+                                    </div>
+
+
+                                    <div style="
+                                            font-size:28px;
+                                            font-weight:bold;"
+                                         class="text-danger">
+
+                                        @String.Format(
+                                            "{0:N0} VNĐ",
+                                            tongTien
+                                        )
+
+                                    </div>
+
+                                </div>
+
+
+
+                                <!-- CẢNH BÁO -->
+
+                                <div class="alert alert-warning"
+                                     style="
+                                        max-width:450px;
+                                        margin:20px auto;
+                                        font-size:16px;">
+
+                                    <strong>
+
+                                        <i class="glyphicon glyphicon-warning-sign"></i>
+
+                                        Lưu ý:
+
+                                    </strong>
+
+                                    <br /><br />
+
+                                    Nếu không thanh toán đúng hạn,
+                                    đơn đặt sân có thể bị hủy.
+
+                                </div>
+
+
+
+                                <!-- FORM THANH TOÁN TRỰC TIẾP -->
+
+                                @using (
+                                    Html.BeginForm(
+                                        "XacNhanTrucTiep",
+                                        "DatSan",
+                                        FormMethod.Post,
+                                        new
+                                        {
+                                            id = "formThanhToanTrucTiep"
+                                        }
+                                    )
+                                )
+                                {
+                                    @Html.AntiForgeryToken()
+
+
+                                    <input type="hidden"
+                                           name="danhSachIdGop"
+                                           value="@danhSachId" />
+
+
+                                    <button type="submit"
+                                            class="btn btn-success btn-lg"
+                                            style="
+                                                min-width:230px;
+                                                font-weight:bold;"
+                                            onclick="
+                                                return confirm(
+                                                    'Bạn chọn thanh toán trực tiếp tại sân?'
+                                                );
+                                            ">
+
+                                        <i class="glyphicon glyphicon-ok"></i>
+
+                                        THANH TOÁN TRỰC TIẾP
+
+                                    </button>
+                                }
+
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- ===================================================== -->
+    <!-- QUAY LẠI -->
+    <!-- ===================================================== -->
+
+    <div style="margin-top:20px;">
+
+        <a href="@Url.Action("Index", "DatSan")"
+           class="btn btn-default">
+
+            <i class="glyphicon glyphicon-arrow-left"></i>
+
+            Quay lại đặt sân
+
+        </a>
+
+
+        <a href="@Url.Action("TrangThai", "DatSan")"
+           class="btn btn-info">
+
+            <i class="glyphicon glyphicon-list"></i>
+
+            Lịch sử đặt sân
+
+        </a>
+
+    </div>
+
+</div>

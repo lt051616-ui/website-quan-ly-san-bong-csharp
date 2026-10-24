@@ -1,0 +1,518 @@
+﻿@model Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.DatSan
+
+@{
+    ViewBag.Title = "Chi tiết đặt sân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="printArea" class="container-fluid" style="padding-left: 30px; padding-right: 30px; padding-top: 20px; padding-bottom: 40px;">
+
+    <!-- CHỈ HIỆN KHI IN -->
+    <div class="print-only invoice-print-header">
+        <div class="invoice-print-title">HÓA ĐƠN ĐẶT SÂN</div>
+        <div class="invoice-print-subtitle">
+            SÂN BÓNG - PHIẾU THANH TOÁN
+        </div>
+        @if (Model != null)
+        {
+            <div class="invoice-print-meta">
+                <span><b>Mã đơn:</b> #@Model.MaDatSan</span>
+                <span><b>Ngày in:</b> @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</span>
+            </div>
+        }
+    </div>
+
+
+    <!-- TIÊU ĐỀ -->
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-success" style="font-weight: bold;">
+                <i class="glyphicon glyphicon-list-alt"></i> CHI TIẾT ĐƠN ĐẶT SÂN
+            </h2>
+            <hr />
+        </div>
+    </div>
+
+    <!-- THÔNG BÁO THÀNH CÔNG -->
+    @if (TempData["ThanhCong"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="glyphicon glyphicon-ok"></i> <b>@TempData["ThanhCong"]</b>
+        </div>
+    }
+
+    @if (Model == null)
+    {
+        <!-- TRƯỜNG HỢP KHÔNG TÌM THẤY DỮ LIỆU -->
+        <div class="alert alert-danger text-center" style="padding: 30px;">
+            <i class="glyphicon glyphicon-warning-sign" style="font-size: 30px; margin-bottom: 10px;"></i>
+            <h4>Không tìm thấy thông tin đặt sân.</h4>
+            <br />
+            <a href="@Url.Action("TrangThai", "DatSan")" class="btn btn-primary">
+                <i class="glyphicon glyphicon-arrow-left"></i> Quay lại lịch sử đặt sân
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <!-- ================= KHỐI BÊN TRÁI: THÔNG TIN ĐƠN & DỊCH VỤ ================= -->
+            <div class="col-md-8">
+
+                <!-- BẢNG THÔNG TIN ĐẶT SÂN -->
+                <div class="panel panel-primary" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <div class="panel-heading">
+                        <h4 style="margin:0; font-weight: bold;">
+                            <i class="glyphicon glyphicon-file"></i> Thông tin đơn hàng #@Model.MaDatSan
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered" style="margin-bottom: 0;">
+                            <tr>
+                                <th style="width:35%; background-color: #f9f9f9;">Mã đặt sân</th>
+                                <td><b class="text-primary">#@Model.MaDatSan</b></td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f9f9f9;">Khách hàng</th>
+                                <td>
+                                    @if (Model.NguoiDung != null &&
+                                         !String.IsNullOrWhiteSpace(Model.NguoiDung.HoTen))
+                                    {
+                                        <span>@Model.NguoiDung.HoTen</span>
+                                    }
+                                    else if (!String.IsNullOrWhiteSpace(Model.HoTenKhachHang))
+                                    {
+                                        <span>@Model.HoTenKhachHang</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có thông tin</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f9f9f9;">Số điện thoại</th>
+                                <td>
+                                    @if (Model.NguoiDung != null &&
+                                         !String.IsNullOrWhiteSpace(Model.NguoiDung.SoDienThoai))
+                                    {
+                                        <span>@Model.NguoiDung.SoDienThoai</span>
+                                    }
+                                    else if (!String.IsNullOrWhiteSpace(Model.SoDienThoaiKhachHang))
+                                    {
+                                        <span>@Model.SoDienThoaiKhachHang</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f9f9f9;">Email</th>
+                                <td>
+                                    @if (Model.NguoiDung != null &&
+                                         !String.IsNullOrWhiteSpace(Model.NguoiDung.Email))
+                                    {
+                                        <span>@Model.NguoiDung.Email</span>
+                                    }
+                                    else if (!String.IsNullOrWhiteSpace(Model.EmailKhachHang))
+                                    {
+                                        <span>@Model.EmailKhachHang</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f9f9f9;">Sân bóng</th>
+                                <td>
+                                    @if (Model.SanBong != null)
+                                    {
+                                        <b class="text-success">@Model.SanBong.TenSan</b>
+                                        <span class="label label-info" style="margin-left: 5px;">@Model.SanBong.LoaiSan</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có thông tin sân</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f9f9f9;">Ngày đá</th>
+                                <td><b>@Model.NgayDat.ToString("dd/MM/yyyy")</b></td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f9f9f9;">Khung giờ</th>
+                                <td>
+                                    @if (Model.KhungGio != null)
+                                    {
+                                        <span class="text-danger" style="font-weight: bold;">
+                                            <i class="glyphicon glyphicon-time"></i>
+                                            @Model.KhungGio.GioBatDau.ToString(@"hh\:mm") - @Model.KhungGio.GioKetThuc.ToString(@"hh\:mm")
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Không có thông tin khung giờ</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: #f9f9f9;">Trạng thái đơn</th>
+                                <td>
+                                    @if (Model.TrangThai == "Đã xác nhận")
+                                    {
+                                        <span class="label label-success">Đã xác nhận</span>
+                                    }
+                                    else if (Model.TrangThai == "Chờ thanh toán")
+                                    {
+                                        <span class="label label-warning">Chờ thanh toán</span>
+                                    }
+                                    else if (Model.TrangThai == "Đã hủy")
+                                    {
+                                        <span class="label label-danger">Đã hủy</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-info">@Model.TrangThai</span>
+                                    }
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- BẢNG DỊCH VỤ ĐI KÈM -->
+                <div class="panel panel-warning" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <div class="panel-heading">
+                        <h4 style="margin:0; font-weight: bold;">
+                            <i class="glyphicon glyphicon-shopping-cart"></i> Dịch vụ đi kèm
+                        </h4>
+                    </div>
+                    <div class="panel-body">
+                        @if (Model.ChiTietDichVuDats != null && Model.ChiTietDichVuDats.Any())
+                        {
+                            <table class="table table-bordered table-striped" style="margin-bottom: 0;">
+                                <thead>
+                                    <tr class="bg-info" style="color: #fff; background-color: #f0ad4e;">
+                                        <th>Tên dịch vụ</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-right">Đơn giá</th>
+                                        <th class="text-right">Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.ChiTietDichVuDats)
+                                    {
+                                        <tr>
+                                            <td>@(item.DichVu != null ? item.DichVu.TenDichVu : "Dịch vụ phụ")</td>
+                                            <td class="text-center">@item.SoLuong</td>
+                                            <td class="text-right">@String.Format("{0:N0}", item.DonGiaTaiThoiDiemThat) VNĐ</td>
+                                            <td class="text-right"><b>@String.Format("{0:N0}", item.SoLuong * item.DonGiaTaiThoiDiemThat) VNĐ</b></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                        else
+                        {
+                            <p class="text-muted text-center" style="margin: 10px 0;">Không sử dụng dịch vụ đi kèm nào.</p>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ================= KHỐI BÊN PHẢI: THANH TOÁN & THAO TÁC ================= -->
+            <div class="col-md-4">
+
+                <!-- THÔNG TIN THANH TOÁN -->
+                <div class="panel panel-success" style="box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <div class="panel-heading">
+                        <h4 style="margin:0; font-weight: bold;">
+                            <i class="glyphicon glyphicon-credit-card"></i> Thanh toán
+                        </h4>
+                    </div>
+                    <div class="panel-body text-center">
+                        <p class="text-muted" style="margin-bottom: 5px;">TỔNG THANH TOÁN</p>
+                        <h2 class="text-danger" style="margin-top: 0; font-weight: bold;">
+                            @String.Format("{0:N0}", Model.TongTien) <small>VNĐ</small>
+                        </h2>
+
+                        <hr style="margin: 10px 0;" />
+
+                        <div class="text-left" style="font-size: 14px; line-height: 1.8;">
+                            <p>
+                                <b>Hình thức thanh toán:</b><br />
+
+                                @if (Model.HinhThucThanhToan == "Tiền mặt")
+                                {
+                                    <span class="label label-success">
+                                        <i class="glyphicon glyphicon-usd"></i>
+                                        Tiền mặt
+                                    </span>
+                                }
+                                else if (Model.HinhThucThanhToan == "Chuyển khoản")
+                                {
+                                    <span class="label label-primary">
+                                        <i class="glyphicon glyphicon-transfer"></i>
+                                        Chuyển khoản
+                                    </span>
+                                }
+                                else if (Model.HinhThucThanhToan == "Trực tiếp" ||
+                                         Model.HinhThucThanhToan == "Thanh toán trực tiếp tại sân")
+                                {
+                                    <span class="label label-info">
+                                        <i class="glyphicon glyphicon-home"></i>
+                                        Thanh toán tại sân
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="label label-default">Chưa chọn</span>
+                                }
+                            </p>
+
+                            <p>
+                                <b>Trạng thái thanh toán:</b><br />
+                                @if (Model.TrangThaiThanhToan == "Đã thanh toán")
+                                {
+                                    <span class="label label-success"><i class="glyphicon glyphicon-ok"></i> Đã thanh toán</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-warning"><i class="glyphicon glyphicon-time"></i> Chưa thanh toán</span>
+                                }
+                            </p>
+
+                            @if (Model.NgayThanhToan.HasValue)
+                            {
+                                <p>
+                                    <b>Thời gian thanh toán:</b><br />
+                                    @Model.NgayThanhToan.Value.ToString("dd/MM/yyyy HH:mm")
+                                </p>
+                            }
+                        </div>
+
+                        <!-- CẢNH BÁO HẠN THANH TOÁN -->
+                        @if (Model.HanThanhToan.HasValue && Model.TrangThaiThanhToan != "Đã thanh toán")
+                        {
+                            <div class="alert alert-danger text-left" style="margin-top: 15px; margin-bottom: 0; font-size: 13px;">
+                                <b><i class="glyphicon glyphicon-warning-sign"></i> Hạn thanh toán:</b><br />
+                                Trước: <strong>@Model.HanThanhToan.Value.ToString("dd/MM/yyyy HH:mm")</strong><br />
+                                <small style="display: block; margin-top: 5px;">Quá hạn đơn đặt sân sẽ tự động hủy.</small>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- KHU VỰC NÚT BẤM THAO TÁC -->
+                <div class="screen-only" style="margin-top: 20px;">
+                    <!-- Nút In Hóa Đơn -->
+                    <button onclick="window.print();" class="btn btn-info btn-block btn-lg" style="margin-bottom: 10px; font-weight: bold;">
+                        <i class="glyphicon glyphicon-print"></i> IN HÓA ĐƠN
+                    </button>
+
+                    <!-- Nút Xem Lịch Sử -->
+                    <a href="@Url.Action("TrangThai", "DatSan")" class="btn btn-primary btn-block" style="margin-bottom: 10px;">
+                        <i class="glyphicon glyphicon-list"></i> XEM LỊCH SỬ ĐẶT SÂN
+                    </a>
+
+                    <!-- Nút Quay Lại Trang Đặt Sân -->
+                    <a href="@Url.Action("Index", "DatSan")" class="btn btn-default btn-block">
+                        <i class="glyphicon glyphicon-arrow-left"></i> TIẾP TỤC ĐẶT SÂN KHÁC
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    }
+
+</div>
+
+<!-- =========================================================
+     CSS IN HÓA ĐƠN
+     ========================================================= -->
+<style>
+    .print-only {
+        display: none;
+    }
+
+    @@page {
+        size: A4 portrait;
+        margin: 10mm;
+    }
+
+    @@media print {
+
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+            width: 100% !important;
+        }
+            /* Ẩn toàn bộ giao diện Layout nhưng không làm mất vùng hóa đơn */
+            body * {
+                visibility: hidden !important;
+            }
+
+        #printArea,
+        #printArea * {
+            visibility: visible !important;
+        }
+
+        #printArea {
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: #fff !important;
+        }
+
+        .screen-only,
+        .btn,
+        a.btn {
+            display: none !important;
+        }
+
+        .print-only {
+            display: block !important;
+        }
+
+        .invoice-print-header {
+            text-align: center;
+            margin: 0 0 12px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        .invoice-print-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: .5px;
+        }
+
+        .invoice-print-subtitle {
+            margin-top: 3px;
+            font-size: 11px;
+            color: #555 !important;
+        }
+
+        .invoice-print-meta {
+            display: flex !important;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 11px;
+        }
+        /* Giữ bố cục 2 cột khi in */
+        #printArea > .row {
+            margin-left: -6px !important;
+            margin-right: -6px !important;
+        }
+
+        #printArea .col-md-8 {
+            width: 66.66666667% !important;
+            float: left !important;
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+        }
+
+        #printArea .col-md-4 {
+            width: 33.33333333% !important;
+            float: left !important;
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+        }
+
+        #printArea .row:before,
+        #printArea .row:after {
+            display: table !important;
+            content: " " !important;
+        }
+
+        #printArea .row:after {
+            clear: both !important;
+        }
+        /* Thu gọn panel để hóa đơn thường vừa 1 trang */
+        #printArea .panel {
+            margin-bottom: 10px !important;
+            box-shadow: none !important;
+            border: 1px solid #999 !important;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        #printArea .panel-heading {
+            padding: 7px 10px !important;
+            background: #eee !important;
+            color: #111 !important;
+            border-bottom: 1px solid #999 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+            #printArea .panel-heading h4 {
+                font-size: 13px !important;
+            }
+
+        #printArea .panel-body {
+            padding: 8px !important;
+        }
+
+        #printArea table {
+            width: 100% !important;
+            margin-bottom: 0 !important;
+            font-size: 10.5px !important;
+            border-collapse: collapse !important;
+        }
+
+            #printArea table th,
+            #printArea table td {
+                padding: 5px 6px !important;
+                border: 1px solid #bbb !important;
+                line-height: 1.25 !important;
+            }
+
+        #printArea h2 {
+            font-size: 18px !important;
+        }
+
+        #printArea .label {
+            border: 1px solid #777 !important;
+            color: #111 !important;
+            background: #fff !important;
+            font-size: 9px !important;
+            padding: 2px 4px !important;
+        }
+
+        #printArea .text-danger,
+        #printArea .text-success,
+        #printArea .text-primary,
+        #printArea .text-info,
+        #printArea .text-warning {
+            color: #111 !important;
+        }
+
+        #printArea .col-md-4 .panel-body {
+            font-size: 11px !important;
+        }
+
+        #printArea .col-md-4 h2 {
+            font-size: 21px !important;
+            margin: 4px 0 8px !important;
+        }
+
+        #printArea hr {
+            margin: 6px 0 !important;
+        }
+        /* Không in URL do code gây ra; URL ở footer là tùy chọn của trình duyệt.
+           Người dùng có thể tắt Headers and footers trong More settings. */
+    }
+</style>

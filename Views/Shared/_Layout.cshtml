@@ -1,0 +1,1385 @@
+﻿@{
+    // =====================================================
+    // THÔNG TIN ĐĂNG NHẬP
+    // =====================================================
+
+    var vaiTro = Session["VaiTro"] != null
+        ? Session["VaiTro"].ToString()
+        : "KhachHang";
+
+    var maNguoiDung = Session["MaNguoiDung"];
+
+    bool isLogged = (maNguoiDung != null);
+
+    string tenVaiTro = "Khách hàng";
+
+    if (vaiTro == "Admin")
+    {
+        tenVaiTro = "Quản trị viên";
+    }
+    else if (vaiTro == "NhanVien")
+    {
+        tenVaiTro = "Nhân viên";
+    }
+
+
+    // Controller hiện tại
+    string currentController =
+        ViewContext.RouteData.Values["controller"] != null
+            ? ViewContext.RouteData.Values["controller"].ToString()
+            : "";
+}
+
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+
+    <title>
+        @ViewBag.Title - Sân Bóng
+    </title>
+
+
+    <!-- =====================================================
+         BOOTSTRAP
+         ===================================================== -->
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" />
+
+
+    <!-- =====================================================
+         FONT AWESOME
+         ===================================================== -->
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+
+
+    <style>
+
+        /* =====================================================
+           RESET
+           ===================================================== */
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f8f7;
+            color: #173b32;
+        }
+
+
+        body {
+            overflow-x: hidden;
+        }
+
+
+
+        /* =====================================================
+           SIDEBAR
+           ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 265px;
+            background: linear-gradient( 180deg, #004d3b 0%, #003c2f 100% );
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.08);
+        }
+
+
+
+        /* =====================================================
+           LOGO
+           ===================================================== */
+
+        .logo-area {
+            height: 90px;
+            padding: 18px 22px;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+
+        .logo-ball {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #007c5e;
+            font-size: 27px;
+            flex-shrink: 0;
+        }
+
+
+        .logo-text {
+            line-height: 1.15;
+        }
+
+
+            .logo-text h2 {
+                margin: 0;
+                font-size: 21px;
+                font-weight: 800;
+                color: white;
+            }
+
+
+            .logo-text span {
+                display: block;
+                margin-top: 4px;
+                font-size: 11px;
+                color: rgba(255,255,255,0.75);
+            }
+
+
+
+        /* =====================================================
+           MENU
+           ===================================================== */
+
+        .menu {
+            padding: 5px 13px;
+            /* chừa chỗ phía dưới cho user */
+            padding-bottom: 150px;
+        }
+
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            min-height: 53px;
+            margin: 4px 0;
+            padding: 0 16px;
+            border-radius: 12px;
+            color: rgba(255,255,255,0.92);
+            text-decoration: none !important;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+
+            .menu-item:hover {
+                background: rgba(255,255,255,0.10);
+                color: white;
+                transform: translateX(2px);
+            }
+
+
+            .menu-item.active {
+                background: linear-gradient( 90deg, #0e9f65, #07965e );
+                color: white;
+                box-shadow: 0 5px 14px rgba(0,0,0,0.12);
+            }
+
+
+        .menu-icon {
+            width: 28px;
+            text-align: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+
+        .badge-new {
+            margin-left: auto;
+            background: #ff4d67;
+            color: white;
+            padding: 3px 7px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: bold;
+        }
+
+
+        /* Badge số cuộc chat đang chờ Nhân viên */
+        .badge-chat {
+            display: none;
+            margin-left: auto;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border-radius: 999px;
+            background: #ff4d67;
+            color: #fff;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+
+
+        /* =====================================================
+           SIDEBAR USER
+           ===================================================== */
+
+        .sidebar-user {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 15px 18px 18px;
+            background: rgba(0,0,0,0.12);
+            border-top: 1px solid rgba(255,255,255,0.08);
+        }
+
+
+        .user-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #0ba66b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 17px;
+        }
+
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+
+            .user-info strong {
+                display: block;
+                font-size: 13px;
+                color: white;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+
+
+            .user-info span {
+                display: block;
+                margin-top: 3px;
+                font-size: 11px;
+                color: rgba(255,255,255,0.65);
+            }
+
+
+        .account-btn {
+            display: block;
+            margin-top: 12px;
+            padding: 9px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.10);
+            color: white !important;
+            text-align: center;
+            text-decoration: none !important;
+            font-size: 12px;
+        }
+
+
+            .account-btn:hover {
+                background: rgba(255,255,255,0.18);
+            }
+
+
+
+        /* =====================================================
+           MAIN
+           ===================================================== */
+
+        .main-wrapper {
+            margin-left: 265px;
+            min-height: 100vh;
+        }
+
+
+
+        /* =====================================================
+           TOP BAR
+           ===================================================== */
+
+        .topbar {
+            height: 76px;
+            background: white;
+            border-bottom: 1px solid #e7eeeb;
+            display: flex;
+            align-items: center;
+            padding: 0 28px;
+            gap: 20px;
+            position: relative;
+            z-index: 900;
+        }
+
+
+
+        /* =====================================================
+           SEARCH
+           ===================================================== */
+
+        .search-box {
+            width: 45%;
+            max-width: 600px;
+            position: relative;
+        }
+
+
+            .search-box i {
+                position: absolute;
+                left: 18px;
+                top: 14px;
+                color: #08765a;
+            }
+
+
+            .search-box input {
+                width: 100%;
+                height: 42px;
+                border: none;
+                outline: none;
+                background: #f0f6f5;
+                border-radius: 25px;
+                padding: 0 20px 0 45px;
+                color: #17463a;
+            }
+
+
+                .search-box input::placeholder {
+                    color: #8a9b96;
+                }
+
+
+
+        /* =====================================================
+           TOP BAR RIGHT
+           ===================================================== */
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+
+        .top-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #41635a;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+
+            .top-info i {
+                color: #005b46;
+                font-size: 17px;
+            }
+
+
+
+        /* =====================================================
+           USER TOPBAR
+           ===================================================== */
+
+        .top-user {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            color: #18483c;
+        }
+
+
+        .top-user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #087d5d;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .top-user-text {
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+
+            .top-user-text strong {
+                display: block;
+                font-size: 12px;
+            }
+
+
+        .topbar-toggle {
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+
+
+        /* =====================================================
+           USER DROPDOWN
+           ===================================================== */
+
+        .top-user-dropdown > .dropdown-menu {
+            right: 0;
+            left: auto;
+            min-width: 210px;
+            border-radius: 10px;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.12);
+            border: 1px solid #e7eeeb;
+            padding: 6px 0;
+            margin-top: 10px;
+        }
+
+
+            .top-user-dropdown > .dropdown-menu > li > a {
+                padding: 9px 16px;
+                color: #173b32;
+                font-weight: 500;
+                font-size: 13px;
+            }
+
+
+                .top-user-dropdown > .dropdown-menu > li > a:hover {
+                    background: #f0f6f5;
+                    color: #007c5e;
+                }
+
+
+
+        /* =====================================================
+           THÔNG BÁO
+           ===================================================== */
+
+        /*
+            CSS chính của dropdown thông báo nằm trong
+            Views/Shared/_ThongBaoDropdown.cshtml.
+
+            Phần này chỉ hỗ trợ vị trí trong topbar.
+        */
+
+        .topbar-right .notification-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .topbar-right .notification-menu {
+            right: 0;
+            left: auto;
+            z-index: 3000;
+        }
+
+
+
+        /* =====================================================
+           CONTENT
+           ===================================================== */
+
+        .content-area {
+            padding: 28px;
+            min-height: calc(100vh - 76px);
+        }
+
+
+
+        /* =====================================================
+           RESPONSIVE <= 1000
+           ===================================================== */
+
+        @@media (max-width: 1000px) {
+
+            .sidebar {
+                width: 220px;
+            }
+
+
+            .main-wrapper {
+                margin-left: 220px;
+            }
+
+
+            .top-info {
+                display: none;
+            }
+
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+
+            .content-area {
+                padding: 18px;
+            }
+        }
+
+
+
+        /* =====================================================
+           RESPONSIVE <= 700
+           ===================================================== */
+
+        @@media (max-width: 700px) {
+
+            .sidebar {
+                width: 70px;
+            }
+
+
+            .logo-area {
+                justify-content: center;
+                padding: 15px 5px;
+            }
+
+
+            .logo-text,
+            .menu-item span:not(.menu-icon),
+            .badge-new,
+            .sidebar-user .user-info,
+            .account-btn {
+                display: none;
+            }
+
+
+            .menu-item {
+                justify-content: center;
+                padding: 0;
+            }
+
+
+            .menu-icon {
+                margin: 0;
+            }
+
+
+            .main-wrapper {
+                margin-left: 70px;
+            }
+
+
+            .search-box {
+                width: 100%;
+            }
+
+
+            .top-user-text {
+                display: none;
+            }
+
+
+            .content-area {
+                padding: 12px;
+            }
+
+
+            .topbar-right {
+                gap: 15px;
+            }
+
+
+            .notification-menu {
+                width: 320px !important;
+            }
+        }
+    </style>
+
+</head>
+
+
+
+<body>
+
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+
+        <!-- LOGO -->
+
+        <div class="logo-area">
+
+            <div class="logo-ball">
+
+                <i class="fa-solid fa-futbol"></i>
+
+            </div>
+
+
+            <div class="logo-text">
+
+                <h2>
+                    SÂN BÓNG
+                </h2>
+
+                <span>
+                    Đá hết mình - Kết nối bạn bè
+                </span>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             MENU
+             ================================================= -->
+
+        <div class="menu">
+
+            <!-- =================================================
+                 MENU RIÊNG ADMIN
+                 ================================================= -->
+            @if (vaiTro == "Admin")
+            {
+                <!-- QUẢN LÝ SÂN BÓNG -->
+                <a href="@Url.Action(
+                             "DanhSachSan",
+                             "DanhSachSan")"
+                   class="menu-item @(currentController == "DanhSachSan" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-futbol"></i>
+                    </span>
+
+                    <span>
+                        Quản Lý Sân Bóng
+                    </span>
+                </a>
+
+
+                <!-- QUẢN LÝ ĐƠN ĐẶT SÂN -->
+                <a href="@Url.Action(
+                             "TrangThai",
+                             "DatSan")"
+                   class="menu-item @(currentController == "DatSan" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </span>
+
+                    <span>
+                        Quản Lý Đơn Đặt Sân
+                    </span>
+                </a>
+
+
+                <!-- QUẢN LÝ KHÁCH HÀNG -->
+                <a href="@Url.Action(
+                             "Index",
+                             "KhachHang")"
+                   class="menu-item @(currentController == "KhachHang" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-users"></i>
+                    </span>
+
+                    <span>
+                        Quản Lý Khách Hàng
+                    </span>
+                </a>
+
+
+                <!-- QUẢN LÝ NHÂN VIÊN -->
+                <a href="@Url.Action(
+                             "Index",
+                             "NhanVien")"
+                   class="menu-item @(currentController == "NhanVien" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </span>
+
+                    <span>
+                        Quản Lý Nhân Viên
+                    </span>
+                </a>
+
+
+                <!-- QUẢN LÝ DỊCH VỤ -->
+                <a href="@Url.Action(
+                             "Index",
+                             "DichVu")"
+                   class="menu-item @(currentController == "DichVu" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-glass-water"></i>
+                    </span>
+
+                    <span>
+                        Quản Lý Dịch Vụ
+                    </span>
+                </a>
+
+
+                <!-- QUẢN LÝ MÃ GIẢM GIÁ -->
+                <a href="@Url.Action(
+                             "Index",
+                             "MaGiamGia")"
+                   class="menu-item @(currentController == "MaGiamGia" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-gift"></i>
+                    </span>
+
+                    <span>
+                        Quản Lý Mã Giảm Giá
+                    </span>
+                </a>
+
+
+                <!-- THỐNG KÊ - BÁO CÁO -->
+                <a href="@Url.Action(
+                             "Index",
+                             "ThongKe")"
+                   class="menu-item @(currentController == "ThongKe" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-chart-column"></i>
+                    </span>
+
+                    <span>
+                        Thống Kê - Báo Cáo
+                    </span>
+                </a>
+            }
+            else
+            {
+                <!-- =================================================
+                     KHÁCH HÀNG / NHÂN VIÊN
+                     Giữ nguyên các chức năng hiện tại.
+                     ================================================= -->
+
+                <!-- TRANG CHỦ
+                     Chỉ Khách hàng có Trang Chủ.
+                     Nhân viên đã được bỏ Trang Chủ trước đó. -->
+                if (vaiTro == "KhachHang")
+                {
+                    <a href="@Url.Action("Index", "Home")"
+                       class="menu-item @(currentController == "Home" ? "active" : "")">
+
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-house"></i>
+                        </span>
+
+                        <span>
+                            Trang Chủ
+                        </span>
+                    </a>
+                }
+
+
+                <!-- ĐẶT SÂN -->
+                <a href="@Url.Action("Index", "DatSan")"
+                   class="menu-item @(currentController == "DatSan" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-futbol"></i>
+                    </span>
+
+                    <span>
+                        @(vaiTro == "NhanVien"
+                            ? "Đặt Sân Cho Khách"
+                            : "Đặt Sân")
+                    </span>
+                </a>
+
+
+                <!-- DANH SÁCH SÂN -->
+                <a href="@Url.Action(
+                             "DanhSachSan",
+                             "DanhSachSan")"
+                   class="menu-item @(currentController == "DanhSachSan" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-futbol"></i>
+                    </span>
+
+                    <span>
+                        @(vaiTro == "NhanVien"
+                            ? "Tra Cứu Sân"
+                            : "Sân Bóng")
+                    </span>
+                </a>
+
+
+                <!-- DỊCH VỤ -->
+                <a href="@Url.Action(
+                             "Index",
+                             "DichVu")"
+                   class="menu-item @(currentController == "DichVu" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-glass-water"></i>
+                    </span>
+
+                    <span>
+                        @(vaiTro == "NhanVien"
+                            ? "Đặt Dịch Vụ Cho Khách"
+                            : "Dịch Vụ")
+                    </span>
+                </a>
+
+
+                <!-- LỊCH SỬ / XỬ LÝ ĐƠN -->
+                <a href="@Url.Action(
+                             "TrangThai",
+                             "DatSan")"
+                   class="menu-item">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </span>
+
+                    <span>
+                        @(vaiTro == "NhanVien"
+                            ? "Xử Lý Đơn Đặt Sân"
+                            : "Lịch Sử Đặt Sân")
+                    </span>
+                </a>
+
+
+                <!-- MÃ GIẢM GIÁ -->
+                <a href="@Url.Action(
+                             "Index",
+                             "MaGiamGia")"
+                   class="menu-item @(currentController == "MaGiamGia" ? "active" : "")">
+
+                    <span class="menu-icon">
+                        <i class="fa-solid fa-gift"></i>
+                    </span>
+
+                    <span>
+                        @(vaiTro == "NhanVien"
+                            ? "Tra Cứu Mã Giảm Giá"
+                            : "Mã Giảm Giá")
+                    </span>
+
+                    @if (vaiTro == "KhachHang")
+                    {
+                        <span class="badge-new">
+                            Mới
+                        </span>
+                    }
+                </a>
+
+
+                <!-- MENU RIÊNG NHÂN VIÊN -->
+                if (vaiTro == "NhanVien")
+                {
+                    <a href="@Url.Action(
+                                 "NhanVien",
+                                 "Chat")"
+                       class="menu-item @(currentController == "Chat" ? "active" : "")">
+
+                        <span class="menu-icon">
+                            <i class="fa-solid fa-comments"></i>
+                        </span>
+
+                        <span>
+                            Tin Nhắn Khách Hàng
+                        </span>
+
+                        <span id="badgeChatNhanVien"
+                              class="badge-chat">
+                        </span>
+                    </a>
+                }
+            }
+
+        </div>
+
+
+
+        <!-- =================================================
+             USER SIDEBAR
+             ================================================= -->
+
+        <div class="sidebar-user">
+
+
+            @if (isLogged)
+            {
+
+                <div class="user-row">
+
+
+                    <div class="user-avatar">
+
+                        <i class="fa-solid fa-user"></i>
+
+                    </div>
+
+
+                    <div class="user-info">
+
+                        <strong>
+
+                            Xin chào,
+                            @tenVaiTro
+
+                        </strong>
+
+                        <span>
+                            @tenVaiTro
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <a href="@Url.Action(
+                             "ThongTin",
+                             "TaiKhoan")"
+                   class="account-btn">
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Xem Tài Khoản
+
+                </a>
+
+            }
+            else
+            {
+
+                <a href="@Url.Action(
+                             "DangNhap",
+                             "TaiKhoan")"
+                   class="account-btn"
+                   style="
+                       background:
+                       rgba(255,255,255,0.2);">
+
+                    <i class="fa-solid fa-right-to-bracket"></i>
+
+                    Đăng nhập
+
+                </a>
+
+            }
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =====================================================
+         MAIN WRAPPER
+         ===================================================== -->
+
+    <div class="main-wrapper">
+
+
+        <!-- =================================================
+             TOP BAR
+             ================================================= -->
+
+        <header class="topbar">
+
+
+            <!-- SEARCH -->
+
+            <div class="search-box">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input type="text"
+                       placeholder="Tìm kiếm sân bóng..." />
+
+            </div>
+
+
+
+            <!-- =================================================
+                 TOP BAR RIGHT
+                 ================================================= -->
+
+            <div class="topbar-right">
+
+
+                <!-- NGÀY -->
+
+                <div class="top-info">
+
+                    <i class="fa-regular fa-calendar"></i>
+
+                    <span>
+
+                        @DateTime.Now.ToString(
+                                      "dddd, dd/MM/yyyy"
+                                  )
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- GIỜ -->
+
+                <div class="top-info">
+
+                    <i class="fa-regular fa-clock"></i>
+
+                    <span>
+
+                        @DateTime.Now.ToString(
+                                      "HH:mm"
+                                  )
+
+                    </span>
+
+                </div>
+
+
+
+                <!-- =================================================
+                     THÔNG BÁO
+                     ================================================= -->
+
+                @if (isLogged)
+                {
+
+                    @Html.Action(
+                                  "Dropdown",
+                                  "ThongBao"
+                              )
+
+                }
+
+
+
+                <!-- =================================================
+                     USER DROPDOWN
+                     ================================================= -->
+
+                <div class="dropdown top-user-dropdown">
+
+
+                    @if (isLogged)
+                    {
+
+                        <!-- USER -->
+
+                        <a href="#"
+                           class="top-user dropdown-toggle topbar-toggle"
+                           data-toggle="dropdown"
+                           role="button"
+                           aria-haspopup="true"
+                           aria-expanded="false"
+                           style="
+                               text-decoration:none;">
+
+
+                            <!-- AVATAR -->
+
+                            <div class="top-user-avatar">
+
+                                <i class="fa-solid fa-user"></i>
+
+                            </div>
+
+
+
+                            <!-- TEXT -->
+
+                            <div class="top-user-text">
+
+                                <span>
+                                    Xin chào,
+                                </span>
+
+                                <strong>
+                                    @tenVaiTro
+                                </strong>
+
+                            </div>
+
+
+
+                            <!-- ARROW -->
+
+                            <i class="fa-solid fa-chevron-down"
+                               style="
+                                   font-size:10px;
+                                   margin-left:5px;">
+                            </i>
+
+                        </a>
+
+
+
+                        <!-- DROPDOWN -->
+
+                        <ul class="dropdown-menu">
+
+
+                            <!-- THÔNG TIN -->
+
+                            <li>
+
+                                <a href="@Url.Action(
+                                             "ThongTin",
+                                             "TaiKhoan")">
+
+                                    <i class="fa-solid fa-user-gear"
+                                       style="
+                                           margin-right:8px;
+                                           color:#007c5e;">
+                                    </i>
+
+                                    Thông tin tài khoản
+
+                                </a>
+
+                            </li>
+
+
+
+                            <li role="separator"
+                                class="divider"
+                                style="
+                                    margin:4px 0;
+                                    background:#e7eeeb;">
+                            </li>
+
+
+
+                            <!-- ĐĂNG XUẤT -->
+
+                            <li>
+
+                                <a href="@Url.Action(
+                                             "DangXuat",
+                                             "TaiKhoan")">
+
+                                    <i class="fa-solid fa-right-from-bracket"
+                                       style="
+                                           margin-right:8px;
+                                           color:#ff304f;">
+                                    </i>
+
+                                    Đăng xuất
+
+                                </a>
+
+                            </li>
+
+
+                        </ul>
+
+                    }
+                    else
+                    {
+
+                        <!-- CHƯA ĐĂNG NHẬP -->
+
+                        <a href="@Url.Action(
+                                     "DangNhap",
+                                     "TaiKhoan")"
+                           class="top-user"
+                           style="
+                               text-decoration:none;"
+                           title="Đăng nhập hệ thống">
+
+
+                            <div class="top-user-avatar">
+
+                                <i class="fa-solid fa-user"></i>
+
+                            </div>
+
+
+                        </a>
+
+                    }
+
+
+                </div>
+
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- =================================================
+             NỘI DUNG CÁC VIEW
+             ================================================= -->
+
+        <main class="content-area">
+
+            @RenderBody()
+
+        </main>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+         ===================================================== -->
+    <!-- JQuery PHẢI load trước popup chat -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/js/bootstrap.min.js"></script>
+
+
+    <!-- =====================================================
+         CHAT HỖ TRỢ KHÁCH HÀNG
+
+         File hiện tại của bạn là:
+         Views/Chat/_ChatKhachHang.cshtml
+
+         Render sau JQuery để JavaScript trong chat chạy được.
+         ===================================================== -->
+
+    @if (isLogged && vaiTro == "KhachHang")
+    {
+        @Html.Partial("~/Views/Chat/_ChatKhachHang.cshtml")
+    }
+
+
+    <!-- =====================================================
+         BADGE CHAT ĐANG CHỜ CHO NHÂN VIÊN
+         ===================================================== -->
+
+    @if (isLogged && vaiTro == "NhanVien")
+    {
+        <script>
+
+            $(function () {
+
+                function capNhatBadgeChatNhanVien() {
+
+                    $.ajax({
+
+                        url:
+                            '@Url.Action(
+                                "DemChatChoNhanVien",
+                                "Chat")',
+
+                        type:
+                            "GET",
+
+                        cache:
+                            false,
+
+                        success:
+                            function (response) {
+
+                                var badge =
+                                    $("#badgeChatNhanVien");
+
+                                if (
+                                    response &&
+                                    response.success &&
+                                    response.count > 0
+                                ) {
+                                    badge
+                                        .text(response.count)
+                                        .css(
+                                            "display",
+                                            "inline-flex"
+                                        );
+                                }
+                                else {
+                                    badge
+                                        .text("")
+                                        .hide();
+                                }
+                            },
+
+                        error:
+                            function () {
+
+                                $("#badgeChatNhanVien")
+                                    .text("")
+                                    .hide();
+                            }
+                    });
+                }
+
+
+                // Chạy ngay khi tải trang.
+                capNhatBadgeChatNhanVien();
+
+
+                // Cập nhật lại sau mỗi 5 giây.
+                window.setInterval(
+                    capNhatBadgeChatNhanVien,
+                    5000
+                );
+
+            });
+
+        </script>
+    }
+
+
+    <!-- =====================================================
+         SCRIPT RIÊNG CỦA TỪNG VIEW
+         ===================================================== -->
+
+    @RenderSection(
+                "Scripts",
+                required: false
+            )
+
+
+</body>
+
+</html>

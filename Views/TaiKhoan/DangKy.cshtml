@@ -1,0 +1,152 @@
+﻿@model Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.NguoiDung
+
+@{
+    ViewBag.Title = "Đăng Ký Tài Khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div style="width: 100%; max-width: 480px; margin: 0 auto;">
+
+    <div class="panel panel-success"
+         style="border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+
+        <div class="panel-heading text-center"
+             style="background-color: #5cb85c; padding: 15px; color: white;">
+
+            <h3 class="panel-title"
+                style="font-size: 18px; font-weight: bold; margin: 0;">
+                ĐĂNG KÝ TÀI KHOẢN
+            </h3>
+
+        </div>
+
+        <div class="panel-body"
+             style="padding: 25px; background-color: #ffffff;">
+
+            @if (ViewBag.ThongBao != null)
+            {
+                <div class="alert alert-danger">
+                    @ViewBag.ThongBao
+                </div>
+            }
+
+            @using (Html.BeginForm("DangKy", "TaiKhoan", FormMethod.Post))
+            {
+                <div class="form-group" style="margin-bottom: 15px;">
+
+                    <label style="font-weight: bold; color: #333;">
+                        Họ và Tên:
+                    </label>
+
+                    @Html.TextBoxFor(m => m.HoTen, new
+                    {
+                        @class = "form-control",
+                        required = "required",
+                        placeholder = "Nhập họ và tên",
+                        style = "border-radius: 4px; height: 40px;"
+                    })
+
+                    @Html.ValidationMessageFor(
+                        m => m.HoTen,
+                        "",
+                        new { @class = "text-danger" })
+
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+
+                    <label style="font-weight: bold; color: #333;">
+                        Số Điện Thoại:
+                    </label>
+
+                    @Html.TextBoxFor(m => m.SoDienThoai, new
+                    {
+                        @class = "form-control",
+                        required = "required",
+                        placeholder = "Nhập số điện thoại",
+                        type = "tel",
+                        style = "border-radius: 4px; height: 40px;"
+                    })
+
+                    @Html.ValidationMessageFor(
+                        m => m.SoDienThoai,
+                        "",
+                        new { @class = "text-danger" })
+
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+
+                    <label style="font-weight: bold; color: #333;">
+                        Email:
+                    </label>
+
+                    @Html.TextBoxFor(m => m.Email, new
+                    {
+                        @class = "form-control",
+                        type = "email",
+                        placeholder = "Nhập địa chỉ email",
+                        style = "border-radius: 4px; height: 40px;"
+                    })
+
+                    @Html.ValidationMessageFor(
+                        m => m.Email,
+                        "",
+                        new { @class = "text-danger" })
+
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+
+                    <label style="font-weight: bold; color: #333;">
+                        Mật Khẩu:
+                    </label>
+
+                    @Html.PasswordFor(m => m.MatKhau, new
+                    {
+                        @class = "form-control",
+                        required = "required",
+                        placeholder = "Nhập mật khẩu",
+                        style = "border-radius: 4px; height: 40px;"
+                    })
+
+                    @Html.ValidationMessageFor(
+                        m => m.MatKhau,
+                        "",
+                        new { @class = "text-danger" })
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-success btn-block"
+                        style="height: 42px;
+                               font-weight: bold;
+                               font-size: 15px;
+                               background-color: #5cb85c;
+                               border-color: #4cae4c;
+                               border-radius: 4px;">
+
+                    Hoàn Tất Đăng Ký
+
+                </button>
+            }
+
+        </div>
+
+        <div class="panel-footer text-center"
+             style="background-color: #f5f5f5;
+                    padding: 12px;
+                    font-size: 13px;">
+
+            Đã có tài khoản?
+
+            <a href="@Url.Action("DangNhap", "TaiKhoan")"
+               style="font-weight: bold; color: #337ab7;">
+                Đăng nhập ngay
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

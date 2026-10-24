@@ -1,0 +1,806 @@
+﻿@model Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.NguoiDung
+
+@{
+    ViewBag.Title = "Tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+
+    /* ============================= */
+    /* TRANG TÀI KHOẢN */
+    /* ============================= */
+
+    .account-page {
+        min-height: calc(100vh - 20px);
+        padding: 35px;
+        background: #f5faf8;
+    }
+
+    /* TIÊU ĐỀ */
+
+    .account-title {
+        max-width: 1100px;
+        margin: 0 auto 25px auto;
+    }
+
+        .account-title h2 {
+            margin: 0;
+            color: #005c46;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        .account-title p {
+            margin-top: 8px;
+            color: #777;
+            font-size: 15px;
+        }
+
+    /* CARD CHÍNH */
+
+    .account-card {
+        max-width: 1100px;
+        margin: auto;
+        background: #fff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 8px 25px rgba(0, 80, 60, 0.10);
+    }
+
+    /* PHẦN HEADER */
+
+    .account-cover {
+        position: relative;
+        padding: 35px 40px;
+        background: linear-gradient(135deg, #004d3a, #00845f, #00a878);
+        color: white;
+    }
+
+    .account-cover-content {
+        display: flex;
+        align-items: center;
+    }
+
+    /* AVATAR */
+
+    .account-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: white;
+        color: #00845f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 48px;
+        margin-right: 25px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.20);
+    }
+
+    .account-name h3 {
+        margin: 0 0 8px 0;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .account-name p {
+        margin: 0;
+        font-size: 15px;
+        opacity: 0.9;
+    }
+
+    /* BADGE */
+
+    .account-role {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 6px 15px;
+        background: rgba(255,255,255,0.18);
+        border: 1px solid rgba(255,255,255,0.30);
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* BODY */
+
+    .account-body {
+        padding: 35px 40px;
+    }
+
+    .section-title {
+        margin-bottom: 20px;
+        color: #005c46;
+        font-size: 21px;
+        font-weight: 700;
+    }
+
+    /* THÔNG TIN */
+
+    .info-row {
+        display: flex;
+        align-items: center;
+        padding: 18px 0;
+        border-bottom: 1px solid #edf1ef;
+    }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+    .info-icon {
+        width: 46px;
+        height: 46px;
+        margin-right: 18px;
+        border-radius: 12px;
+        background: #e8f7f1;
+        color: #00845f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+
+    .info-content {
+        flex: 1;
+    }
+
+    .info-label {
+        color: #888;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        color: #222;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    /* BADGE VAI TRÒ */
+
+    .role-badge {
+        display: inline-block;
+        padding: 7px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .role-admin {
+        background: #ffe8e8;
+        color: #d63031;
+    }
+
+    .role-staff {
+        background: #e8f2ff;
+        color: #2672d8;
+    }
+
+    .role-customer {
+        background: #e4f7ee;
+        color: #00845f;
+    }
+
+    /* TRẠNG THÁI */
+
+    .status-active {
+        display: inline-block;
+        padding: 7px 16px;
+        background: #e4f7ee;
+        color: #00845f;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .status-inactive {
+        display: inline-block;
+        padding: 7px 16px;
+        background: #ffe8e8;
+        color: #d63031;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    /* CỘT BÊN PHẢI */
+
+    .account-actions {
+        margin-top: 10px;
+    }
+
+    .action-title {
+        color: #005c46;
+        font-size: 21px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .action-card {
+        background: #f8fcfa;
+        border: 1px solid #e1eee9;
+        border-radius: 15px;
+        padding: 22px;
+        margin-bottom: 15px;
+        transition: all 0.2s ease;
+    }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,80,60,0.10);
+        }
+
+    .action-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 13px;
+        background: #e4f7ee;
+        color: #00845f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        margin-bottom: 12px;
+    }
+
+    .action-card h4 {
+        margin: 0 0 6px 0;
+        color: #005c46;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .action-card p {
+        color: #777;
+        font-size: 13px;
+        margin: 0 0 15px 0;
+    }
+
+    .btn-action {
+        display: inline-block;
+        padding: 9px 18px;
+        background: #00845f;
+        color: white;
+        border-radius: 22px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+        .btn-action:hover {
+            background: #006b4d;
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-history {
+        background: #2878d7;
+    }
+
+        .btn-history:hover {
+            background: #1f62b2;
+        }
+
+    .btn-logout {
+        background: #e74c3c;
+    }
+
+        .btn-logout:hover {
+            background: #c0392b;
+        }
+
+    /* THÔNG BÁO */
+
+    .account-note {
+        max-width: 1100px;
+        margin: 20px auto 0 auto;
+        padding: 18px 22px;
+        background: #eaf8f3;
+        border-left: 5px solid #00845f;
+        border-radius: 10px;
+        color: #35675a;
+    }
+
+        .account-note strong {
+            color: #005c46;
+        }
+
+
+    /* ============================= */
+    /* RESPONSIVE */
+    /* ============================= */
+
+    @@media (max-width: 768px) {
+
+        .account-page {
+            padding: 20px;
+        }
+
+        .account-cover {
+            padding: 25px;
+        }
+
+        .account-cover-content {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .account-avatar {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+
+        .account-body {
+            padding: 25px;
+        }
+    }
+</style>
+
+
+<div class="account-page">
+
+    <!-- ============================= -->
+    <!-- TIÊU ĐỀ -->
+    <!-- ============================= -->
+
+    <div class="account-title">
+
+        <h2>
+            👤 Tài khoản
+        </h2>
+
+        <p>
+            Quản lý thông tin cá nhân và các hoạt động đặt sân của bạn
+        </p>
+
+    </div>
+
+
+    @if (Model == null)
+    {
+        <!-- ============================= -->
+        <!-- KHÔNG CÓ THÔNG TIN -->
+        <!-- ============================= -->
+
+        <div class="account-card">
+
+            <div class="account-body">
+
+                <div class="alert alert-danger">
+
+                    <strong>⚠ Không tìm thấy thông tin tài khoản.</strong>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+
+        <!-- ============================= -->
+        <!-- CARD TÀI KHOẢN -->
+        <!-- ============================= -->
+
+        <div class="account-card">
+
+
+            <!-- ============================= -->
+            <!-- HEADER -->
+            <!-- ============================= -->
+
+            <div class="account-cover">
+
+                <div class="account-cover-content">
+
+                    <div class="account-avatar">
+                        👤
+                    </div>
+
+
+                    <div class="account-name">
+
+                        <h3>
+                            @Model.HoTen
+                        </h3>
+
+                        <p>
+                            Tài khoản hệ thống quản lý sân bóng
+                        </p>
+
+
+                        <!-- VAI TRÒ -->
+
+                        @if (Model.VaiTro == "Admin")
+                        {
+                            <span class="account-role">
+                                ⚙ Quản trị viên
+                            </span>
+                        }
+                        else if (Model.VaiTro == "NhanVien")
+                        {
+                            <span class="account-role">
+                                👨‍💼 Nhân viên
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="account-role">
+                                ⚽ Khách hàng
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ============================= -->
+            <!-- BODY -->
+            <!-- ============================= -->
+
+            <div class="account-body">
+
+                <div class="row">
+
+
+                    <!-- ================================= -->
+                    <!-- THÔNG TIN CÁ NHÂN -->
+                    <!-- ================================= -->
+
+                    <div class="col-md-7">
+
+                        <div class="section-title">
+                            📋 Thông tin cá nhân
+                        </div>
+
+
+                        <!-- MÃ TÀI KHOẢN -->
+
+                        <div class="info-row">
+
+                            <div class="info-icon">
+                                #
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-label">
+                                    Mã tài khoản
+                                </div>
+
+                                <div class="info-value">
+
+                                    #@Model.MaNguoiDung
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- HỌ TÊN -->
+
+                        <div class="info-row">
+
+                            <div class="info-icon">
+                                👤
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-label">
+                                    Họ và tên
+                                </div>
+
+                                <div class="info-value">
+
+                                    @Model.HoTen
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- SỐ ĐIỆN THOẠI -->
+
+                        <div class="info-row">
+
+                            <div class="info-icon">
+                                📱
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-label">
+                                    Số điện thoại
+                                </div>
+
+                                <div class="info-value">
+
+                                    @Model.SoDienThoai
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="info-row">
+
+                            <div class="info-icon">
+                                ✉
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-label">
+                                    Email
+                                </div>
+
+                                <div class="info-value">
+
+                                    @if (!String.IsNullOrEmpty(Model.Email))
+                                    {
+                                        @Model.Email
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#999;">
+                                            Chưa cập nhật
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- VAI TRÒ -->
+
+                        <div class="info-row">
+
+                            <div class="info-icon">
+                                🔐
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-label">
+                                    Vai trò
+                                </div>
+
+                                <div class="info-value">
+
+                                    @if (Model.VaiTro == "Admin")
+                                    {
+                                        <span class="role-badge role-admin">
+                                            ⚙ Quản trị viên
+                                        </span>
+                                    }
+                                    else if (Model.VaiTro == "NhanVien")
+                                    {
+                                        <span class="role-badge role-staff">
+                                            👨‍💼 Nhân viên
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="role-badge role-customer">
+                                            👤 Khách hàng
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- NGÀY TẠO -->
+
+                        <div class="info-row">
+
+                            <div class="info-icon">
+                                📅
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-label">
+                                    Ngày tạo tài khoản
+                                </div>
+
+                                <div class="info-value">
+
+                                    @if (Model.NgayTao.HasValue)
+                                    {
+                                        @Model.NgayTao.Value.ToString("dd/MM/yyyy HH:mm")
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#999;">
+                                            Không có thông tin
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TRẠNG THÁI -->
+
+                        <div class="info-row">
+
+                            <div class="info-icon">
+                                ✓
+                            </div>
+
+                            <div class="info-content">
+
+                                <div class="info-label">
+                                    Trạng thái tài khoản
+                                </div>
+
+                                <div class="info-value">
+
+                                    @if (Model.TrangThai == "Hoạt động")
+                                    {
+                                        <span class="status-active">
+                                            ✓ Hoạt động
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-inactive">
+                                            ✕ @Model.TrangThai
+                                        </span>
+                                    }
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ================================= -->
+                    <!-- CHỨC NĂNG -->
+                    <!-- ================================= -->
+
+                    <div class="col-md-5">
+
+                        <div class="account-actions">
+
+                            <div class="action-title">
+                                ⚡ Thao tác nhanh
+                            </div>
+
+
+                            <!-- ĐẶT SÂN -->
+
+                            <div class="action-card">
+
+                                <div class="action-icon">
+                                    ⚽
+                                </div>
+
+                                <h4>
+                                    Đặt sân bóng
+                                </h4>
+
+                                <p>
+                                    Chọn sân, khung giờ và dịch vụ cho trận đấu.
+                                </p>
+
+                                <a href="@Url.Action("Index", "DatSan")"
+                                   class="btn-action">
+
+                                    ⚽ Đặt sân ngay →
+
+                                </a>
+
+                            </div>
+
+
+                            <!-- LỊCH SỬ -->
+
+                            <div class="action-card">
+
+                                <div class="action-icon">
+                                    📋
+                                </div>
+
+                                <h4>
+                                    Lịch sử đặt sân
+                                </h4>
+
+                                <p>
+                                    Xem các lần đặt sân và trạng thái thanh toán.
+                                </p>
+
+                                <a href="@Url.Action("TrangThai", "DatSan")"
+                                   class="btn-action btn-history">
+
+                                    📋 Xem lịch sử →
+
+                                </a>
+
+                            </div>
+
+
+                            <!-- ĐĂNG XUẤT -->
+
+                            <div class="action-card">
+
+                                <div class="action-icon"
+                                     style="background:#fff0ee;color:#e74c3c;">
+
+                                    🚪
+
+                                </div>
+
+                                <h4>
+                                    Đăng xuất
+                                </h4>
+
+                                <p>
+                                    Kết thúc phiên đăng nhập hiện tại.
+                                </p>
+
+                                <a href="@Url.Action("DangXuat", "TaiKhoan")"
+                                   class="btn-action btn-logout"
+                                   onclick="return confirm('Bạn có chắc chắn muốn đăng xuất không?');">
+
+                                    🚪 Đăng xuất
+
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ============================= -->
+        <!-- THÔNG BÁO -->
+        <!-- ============================= -->
+
+        <div class="account-note">
+
+            <strong>💡 Thông tin:</strong>
+
+            Bạn có thể xem thông tin cá nhân, thực hiện đặt sân
+            và theo dõi lịch sử đặt sân tại đây.
+
+        </div>
+
+    }
+
+</div>

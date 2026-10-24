@@ -1,0 +1,409 @@
+﻿@model List<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.DatSan>
+
+@{
+    ViewBag.Title = "Thanh toán đặt sân";
+
+    decimal tongTien = Model.Sum(x => x.TongTien ?? 0);
+
+    string danhSachId = string.Join(",", Model.Select(x => x.MaDatSan));
+}
+
+<div class="container-fluid" style="padding-left: 30px; padding-right: 30px; padding-top: 20px; padding-bottom: 40px;">
+
+    <!-- TIÊU ĐỀ -->
+    <div class="text-center">
+        <h2>
+            <i class="fa fa-credit-card"></i>
+            THANH TOÁN ĐẶT SÂN
+        </h2>
+
+        <p class="text-muted">
+            Vui lòng chọn phương thức thanh toán
+        </p>
+    </div>
+
+    <hr />
+
+    <!-- DANH SÁCH SÂN -->
+    <div class="panel panel-primary">
+
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <i class="fa fa-info-circle"></i>
+                Thông tin đặt sân
+            </h4>
+        </div>
+
+        <div class="panel-body">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+                    <tr>
+                        <th>Mã đặt</th>
+                        <th>Sân</th>
+                        <th>Loại sân</th>
+                        <th>Ngày đặt</th>
+                        <th>Khung giờ</th>
+                        <th>Giá</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                #@item.MaDatSan
+                            </td>
+
+                            <td>
+                                @(item.SanBong != null ? item.SanBong.TenSan : "")
+                            </td>
+
+                            <td>
+                                @(item.SanBong != null ? item.SanBong.LoaiSan : "")
+                            </td>
+
+                            <td>
+                                @item.NgayDat.ToString("dd/MM/yyyy")
+                            </td>
+
+                            <td>
+
+                                @if (item.KhungGio != null)
+                                {
+                                    @item.KhungGio.GioBatDau.ToString(@"hh\:mm")
+                                    @: -
+                                    @item.KhungGio.GioKetThuc.ToString(@"hh\:mm")
+                                }
+
+                            </td>
+
+                            <td>
+                                @String.Format("{0:N0} VNĐ", item.TongTien ?? 0)
+                            </td>
+
+                            <td>
+                                <span class="label label-warning">
+                                    @item.TrangThai
+                                </span>
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- DỊCH VỤ -->
+    @{
+        var dichVuDat = Model
+            .SelectMany(x => x.ChiTietDichVuDats ?? new List<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.ChiTietDichVuDat>())
+            .ToList();
+    }
+
+    @if (dichVuDat.Any())
+    {
+        <div class="panel panel-warning">
+
+            <div class="panel-heading">
+
+                <h4 class="panel-title">
+                    <i class="fa fa-shopping-cart"></i>
+                    Dịch vụ đã chọn
+                </h4>
+
+            </div>
+
+            <div class="panel-body">
+
+                <table class="table table-bordered table-striped">
+
+                    <thead>
+
+                        <tr>
+                            <th>Dịch vụ</th>
+                            <th>Số lượng</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var ct in dichVuDat)
+                        {
+                            <tr>
+
+                                <td>
+                                    @(ct.DichVu != null ? ct.DichVu.TenDichVu : "")
+                                </td>
+
+                                <td>
+                                    @ct.SoLuong
+                                </td>
+
+                                <td>
+                                    @String.Format("{0:N0} VNĐ",
+                                        ct.DonGiaTaiThoiDiemThat)
+                                </td>
+
+                                <td>
+                                    @String.Format("{0:N0} VNĐ",
+                                        ct.SoLuong * ct.DonGiaTaiThoiDiemThat)
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+    }
+
+
+    <!-- TỔNG TIỀN -->
+
+    <div class="alert alert-success text-right">
+
+        <h3>
+
+            Tổng tiền:
+
+            <strong class="text-danger">
+
+                @String.Format("{0:N0} VNĐ", tongTien)
+
+            </strong>
+
+        </h3>
+
+    </div>
+
+
+    <!-- PHƯƠNG THỨC THANH TOÁN -->
+
+    <div class="panel panel-default">
+
+        <div class="panel-heading">
+
+            <h4 class="panel-title">
+
+                <i class="fa fa-money"></i>
+
+                Chọn phương thức thanh toán
+
+            </h4>
+
+        </div>
+
+
+        <div class="panel-body">
+
+            <div class="row">
+
+
+                <!-- CHUYỂN KHOẢN -->
+
+                <div class="col-md-6">
+
+                    <div class="panel panel-info">
+
+                        <div class="panel-heading text-center">
+
+                            <h4>
+
+                                <i class="fa fa-qrcode"></i>
+
+                                Chuyển khoản
+
+                            </h4>
+
+                        </div>
+
+
+                        <div class="panel-body text-center">
+
+                            <p>
+                                Thanh toán bằng chuyển khoản ngân hàng.
+                            </p>
+
+                            <p class="text-muted">
+                                Quét mã QR để thanh toán.
+                            </p>
+
+
+                            <!-- QR -->
+
+                            <div style="margin:20px 0;">
+
+                                <img src="@Url.Content("~/Content/images/qr-thanh-toan.png")"
+                                     alt="QR thanh toán"
+                                     style="width:220px;
+                                            height:220px;
+                                            object-fit:contain;
+                                            border:1px solid #ddd;
+                                            padding:10px;" />
+
+                            </div>
+
+
+                            <div class="alert alert-info">
+
+                                <strong>
+                                    Tổng số tiền cần thanh toán:
+                                </strong>
+
+                                <br />
+
+                                <span style="font-size:22px; color:#d9534f;">
+
+                                    @String.Format("{0:N0} VNĐ", tongTien)
+
+                                </span>
+
+                            </div>
+
+
+                            @using (Html.BeginForm(
+                                "XacNhanChuyenKhoan",
+                                "DatSan",
+                                FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="danhSachIdGop"
+                                       value="@danhSachId" />
+
+                                <button type="submit"
+                                        class="btn btn-info btn-lg">
+
+                                    <i class="fa fa-check"></i>
+
+                                    Tôi đã thanh toán
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- THANH TOÁN TRỰC TIẾP -->
+
+                <div class="col-md-6">
+
+                    <div class="panel panel-success">
+
+                        <div class="panel-heading text-center">
+
+                            <h4>
+
+                                <i class="fa fa-money"></i>
+
+                                Thanh toán trực tiếp
+
+                            </h4>
+
+                        </div>
+
+
+                        <div class="panel-body text-center">
+
+                            <p>
+                                Thanh toán trực tiếp tại sân bóng.
+                            </p>
+
+                            <p class="text-warning">
+
+                                Bạn cần thanh toán trước thời hạn
+                                quy định.
+
+                            </p>
+
+
+                            <div class="alert alert-warning">
+
+                                <i class="fa fa-clock-o"></i>
+
+                                <strong>
+                                    Lưu ý:
+                                </strong>
+
+                                <br />
+
+                                Nếu không thanh toán đúng hạn,
+                                đặt sân có thể bị hủy.
+
+                            </div>
+
+
+                            @using (Html.BeginForm(
+                                "XacNhanTrucTiep",
+                                "DatSan",
+                                FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+
+                                <input type="hidden"
+                                       name="danhSachIdGop"
+                                       value="@danhSachId" />
+
+                                <button type="submit"
+                                        class="btn btn-success btn-lg">
+
+                                    <i class="fa fa-check"></i>
+
+                                    Thanh toán trực tiếp
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- QUAY LẠI -->
+
+    <div class="text-center">
+
+        <a href="@Url.Action("Index", "DatSan")"
+           class="btn btn-default">
+
+            <i class="fa fa-arrow-left"></i>
+
+            Quay lại đặt sân
+
+        </a>
+
+    </div>
+
+</div>

@@ -1,0 +1,83 @@
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Phân Tích Thiết Kế Website QL Sân Bóng.dll.config
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Phân Tích Thiết Kế Website QL Sân Bóng.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Phân Tích Thiết Kế Website QL Sân Bóng.pdb
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\csc.exe
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\csc.exe.config
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\csc.rsp
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\csi.exe
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\csi.exe.config
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\csi.rsp
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.Build.Tasks.CodeAnalysis.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.CodeAnalysis.CSharp.Scripting.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.CodeAnalysis.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.CodeAnalysis.Scripting.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.CodeAnalysis.VisualBasic.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.CSharp.Core.targets
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.DiaSymReader.Native.amd64.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.DiaSymReader.Native.x86.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.Managed.Core.targets
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.VisualBasic.Core.targets
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\Microsoft.Win32.Primitives.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.AppContext.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Collections.Immutable.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Console.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Diagnostics.DiagnosticSource.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Diagnostics.FileVersionInfo.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Diagnostics.StackTrace.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Globalization.Calendars.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.IO.Compression.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.IO.Compression.ZipFile.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.IO.FileSystem.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.IO.FileSystem.Primitives.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Net.Http.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Net.Sockets.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Reflection.Metadata.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Runtime.InteropServices.RuntimeInformation.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Security.Cryptography.Algorithms.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Security.Cryptography.Encoding.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Security.Cryptography.Primitives.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Security.Cryptography.X509Certificates.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Text.Encoding.CodePages.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Threading.Tasks.Extensions.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.ValueTuple.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Xml.ReaderWriter.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Xml.XmlDocument.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Xml.XPath.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\System.Xml.XPath.XDocument.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\vbc.exe
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\vbc.exe.config
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\vbc.rsp
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\VBCSCompiler.exe
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\roslyn\VBCSCompiler.exe.config
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Antlr3.Runtime.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\EntityFramework.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\EntityFramework.SqlServer.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Microsoft.Web.Infrastructure.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Newtonsoft.Json.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Helpers.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Mvc.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Optimization.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Razor.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.WebPages.Deployment.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.WebPages.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.WebPages.Razor.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\WebGrease.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\EntityFramework.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\EntityFramework.SqlServer.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Helpers.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Mvc.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Optimization.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.Razor.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.WebPages.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.WebPages.Deployment.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\System.Web.WebPages.Razor.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Newtonsoft.Json.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Antlr3.Runtime.pdb
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\obj\Debug\Phân Tích Thiết Kế Website QL Sân Bóng.csproj.AssemblyReference.cache
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\obj\Debug\Phân Tích Thiết Kế Website QL Sân Bóng.csproj.CoreCompileInputs.cache
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\obj\Debug\Ph_n T_c.B55D5A25.Up2Date
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\obj\Debug\Phân Tích Thiết Kế Website QL Sân Bóng.dll
+E:\Phân Tích Thiết Kế Website QL Sân Bóng\Phân Tích Thiết Kế Website QL Sân Bóng\obj\Debug\Phân Tích Thiết Kế Website QL Sân Bóng.pdb

@@ -1,0 +1,532 @@
+﻿@{
+    ViewBag.Title = "Thêm Mã Giảm Giá";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .voucher-create-wrapper {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+
+    .voucher-create-header {
+        margin-bottom: 20px;
+    }
+
+        .voucher-create-header h2 {
+            margin: 0;
+            font-size: 34px;
+            font-weight: 800;
+            color: #173b32;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .voucher-create-header p {
+            margin-top: 8px;
+            color: #6f837c;
+            font-size: 15px;
+        }
+
+    .voucher-create-card {
+        background: #ffffff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        border: 1px solid #edf3f1;
+    }
+
+    .voucher-create-top {
+        background: linear-gradient(135deg, #007c5e, #0a9b78);
+        color: white;
+        padding: 24px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+        .voucher-create-top h3 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .voucher-create-top .sub-text {
+            opacity: 0.95;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+    .voucher-create-body {
+        padding: 28px;
+    }
+
+    .form-section-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #173b32;
+        margin-bottom: 16px;
+        padding-bottom: 8px;
+        border-bottom: 1px dashed #dbe8e3;
+    }
+
+    .voucher-form-group {
+        margin-bottom: 18px;
+    }
+
+        .voucher-form-group label {
+            font-weight: 700;
+            color: #24443b;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+    .voucher-input,
+    .voucher-select {
+        width: 100%;
+        height: 44px;
+        border: 1px solid #d9e7e2;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 14px;
+        outline: none;
+        transition: all 0.2s ease;
+        background: #fff;
+    }
+
+        .voucher-input:focus,
+        .voucher-select:focus {
+            border-color: #0a9b78;
+            box-shadow: 0 0 0 3px rgba(10, 155, 120, 0.12);
+        }
+
+    .voucher-help {
+        margin-top: 6px;
+        font-size: 12px;
+        color: #7b8e88;
+    }
+
+    .voucher-info-box {
+        background: #f4fbf8;
+        border: 1px solid #d9efe7;
+        border-radius: 14px;
+        padding: 18px;
+        margin-bottom: 22px;
+    }
+
+        .voucher-info-box ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #56736a;
+        }
+
+        .voucher-info-box li {
+            margin-bottom: 6px;
+        }
+
+    .voucher-type-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-bottom: 6px;
+    }
+
+    .voucher-radio-card {
+        border: 1px solid #d9e7e2;
+        border-radius: 14px;
+        padding: 14px 16px;
+        cursor: pointer;
+        transition: 0.2s ease;
+        background: #fff;
+    }
+
+        .voucher-radio-card:hover {
+            border-color: #0a9b78;
+            background: #f8fdfb;
+        }
+
+        .voucher-radio-card input {
+            margin-right: 8px;
+        }
+
+        .voucher-radio-card.active {
+            border-color: #0a9b78;
+            background: #eefaf6;
+            box-shadow: 0 0 0 2px rgba(10,155,120,0.08);
+        }
+
+    .voucher-radio-title {
+        font-weight: 700;
+        color: #173b32;
+        margin-bottom: 4px;
+    }
+
+    .voucher-radio-desc {
+        font-size: 12px;
+        color: #708780;
+    }
+
+    .voucher-action-bar {
+        margin-top: 28px;
+        padding-top: 22px;
+        border-top: 1px solid #edf3f1;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn-voucher-back {
+        background: #f6f7f8;
+        color: #394b45;
+        border: 1px solid #d9e7e2;
+        border-radius: 10px;
+        padding: 11px 18px;
+        font-weight: 600;
+        text-decoration: none !important;
+    }
+
+        .btn-voucher-back:hover {
+            background: #eceff1;
+            color: #22312d;
+        }
+
+    .btn-voucher-save {
+        background: linear-gradient(135deg, #007c5e, #0a9b78);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 20px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+        .btn-voucher-save:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+    .voucher-badge-preview {
+        display: inline-block;
+        padding: 7px 12px;
+        border-radius: 20px;
+        background: #e3f7ef;
+        color: #0a8f69;
+        font-weight: 700;
+        font-size: 12px;
+    }
+
+    .hidden-field {
+        display: none;
+    }
+
+    @@media (max-width: 768px) {
+        .voucher-type-box {
+            grid-template-columns: 1fr;
+        }
+
+        .voucher-create-top {
+            padding: 20px;
+        }
+
+        .voucher-create-body {
+            padding: 20px;
+        }
+
+        .voucher-create-header h2 {
+            font-size: 28px;
+        }
+    }
+</style>
+
+<div class="voucher-create-wrapper">
+
+    <div class="voucher-create-header">
+        <h2>
+            <i class="fa-solid fa-gift" style="color:#007c5e;"></i>
+            Thêm Mã Giảm Giá
+        </h2>
+        <p>
+            Tạo mã ưu đãi mới cho khách hàng khi đặt sân hoặc sử dụng dịch vụ.
+        </p>
+    </div>
+
+    <div class="voucher-create-card">
+
+        <div class="voucher-create-top">
+            <div>
+                <h3>Thiết lập mã khuyến mãi mới</h3>
+                <div class="sub-text">
+                    Vui lòng nhập đầy đủ thông tin trước khi lưu mã giảm giá.
+                </div>
+            </div>
+
+            <div>
+                <span class="voucher-badge-preview">
+                    <i class="fa-solid fa-ticket"></i>
+                    Voucher mới
+                </span>
+            </div>
+        </div>
+
+        <div class="voucher-create-body">
+
+            @if (ViewBag.ThongBao != null)
+            {
+                <div class="alert alert-danger" style="border-radius:10px;">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    @ViewBag.ThongBao
+                </div>
+            }
+
+            <div class="voucher-info-box">
+                <ul>
+                    <li><strong>Mã code</strong> nên ngắn gọn, dễ nhớ, không trùng nhau.</li>
+                    <li>Chỉ nên chọn <strong>một loại giảm giá</strong>: theo phần trăm hoặc theo số tiền.</li>
+                    <li>Với mã giảm theo phần trăm, bạn có thể nhập <strong>số tiền giảm tối đa</strong>.</li>
+                </ul>
+            </div>
+
+            @using (Html.BeginForm("Them", "MaGiamGia", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="row">
+
+                    <!-- CỘT TRÁI -->
+                    <div class="col-md-6">
+
+                        <div class="form-section-title">
+                            <i class="fa-solid fa-barcode"></i>
+                            Thông tin cơ bản
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Mã code</label>
+                            <input type="text"
+                                   name="maCode"
+                                   class="voucher-input"
+                                   placeholder="Ví dụ: GIAM10PCT"
+                                   required />
+                            <div class="voucher-help">
+                                Mã sẽ tự động lưu dạng chữ in hoa nếu controller có xử lý trim/uppercase.
+                            </div>
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Loại giảm giá</label>
+
+                            <div class="voucher-type-box">
+
+                                <label class="voucher-radio-card active" id="cardPercent">
+                                    <input type="radio"
+                                           name="kieuGiamGia"
+                                           value="PhanTram"
+                                           checked />
+                                    <div class="voucher-radio-title">
+                                        Giảm theo phần trăm
+                                    </div>
+                                    <div class="voucher-radio-desc">
+                                        Ví dụ: giảm 10%, 20%, 30%...
+                                    </div>
+                                </label>
+
+                                <label class="voucher-radio-card" id="cardMoney">
+                                    <input type="radio"
+                                           name="kieuGiamGia"
+                                           value="SoTien" />
+                                    <div class="voucher-radio-title">
+                                        Giảm số tiền cố định
+                                    </div>
+                                    <div class="voucher-radio-desc">
+                                        Ví dụ: giảm 50.000đ, 100.000đ...
+                                    </div>
+                                </label>
+
+                            </div>
+                        </div>
+
+                        <div class="voucher-form-group" id="groupPhanTramGiam">
+                            <label>Phần trăm giảm (%)</label>
+                            <input type="number"
+                                   name="phanTramGiam"
+                                   id="phanTramGiam"
+                                   class="voucher-input"
+                                   placeholder="Ví dụ: 10"
+                                   min="0"
+                                   step="0.01" />
+                            <div class="voucher-help">
+                                Nhập giá trị từ 1 đến 100 nếu dùng mã giảm theo phần trăm.
+                            </div>
+                        </div>
+
+                        <div class="voucher-form-group" id="groupSoTienGiam" style="display:none;">
+                            <label>Số tiền giảm (VNĐ)</label>
+                            <input type="number"
+                                   name="soTienGiam"
+                                   id="soTienGiam"
+                                   class="voucher-input"
+                                   placeholder="Ví dụ: 50000"
+                                   min="0"
+                                   step="0.01" />
+                            <div class="voucher-help">
+                                Nhập số tiền cố định muốn giảm cho đơn hàng.
+                            </div>
+                        </div>
+
+                        <div class="voucher-form-group" id="groupSoTienGiamToiDa">
+                            <label>Số tiền giảm tối đa (VNĐ)</label>
+                            <input type="number"
+                                   name="soTienGiamToiDa"
+                                   id="soTienGiamToiDa"
+                                   class="voucher-input"
+                                   placeholder="Ví dụ: 50000"
+                                   min="0"
+                                   step="0.01" />
+                            <div class="voucher-help">
+                                Chỉ áp dụng khi giảm theo phần trăm. Nếu không giới hạn, có thể để trống hoặc nhập 0.
+                            </div>
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Giá trị đơn tối thiểu (VNĐ)</label>
+                            <input type="number"
+                                   name="giaTriDonHangToiThieu"
+                                   class="voucher-input"
+                                   placeholder="Ví dụ: 200000"
+                                   min="0"
+                                   step="0.01"
+                                   required />
+                        </div>
+
+                    </div>
+
+
+                    <!-- CỘT PHẢI -->
+                    <div class="col-md-6">
+
+                        <div class="form-section-title">
+                            <i class="fa-solid fa-calendar-check"></i>
+                            Điều kiện áp dụng
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Số lượng mã</label>
+                            <input type="number"
+                                   name="soLuong"
+                                   class="voucher-input"
+                                   value="100"
+                                   min="1"
+                                   required />
+                            <div class="voucher-help">
+                                Số lượt mã này có thể được sử dụng.
+                            </div>
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Ngày bắt đầu</label>
+                            <input type="date"
+                                   name="ngayBatDau"
+                                   class="voucher-input"
+                                   required />
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Ngày kết thúc</label>
+                            <input type="date"
+                                   name="ngayKetThuc"
+                                   class="voucher-input"
+                                   required />
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Trạng thái</label>
+                            <select name="trangThai"
+                                    class="voucher-select">
+                                <option value="1">Đang hoạt động</option>
+                                <option value="0">Tạm dừng</option>
+                            </select>
+                            <div class="voucher-help">
+                                Nếu chọn tạm dừng, mã sẽ chưa được áp dụng ngay.
+                            </div>
+                        </div>
+
+                        <div class="voucher-form-group">
+                            <label>Xem nhanh nguyên tắc</label>
+                            <div style="
+                                border:1px dashed #cfe3db;
+                                border-radius:12px;
+                                padding:16px;
+                                background:#fbfefd;
+                                color:#5a726a;
+                                line-height:1.7;">
+                                • Khách hàng chỉ dùng được mã khi đủ điều kiện đơn tối thiểu.<br />
+                                • Hệ thống sẽ kiểm tra thời gian hiệu lực của mã.<br />
+                                • Mã hết hạn sẽ tự hiển thị trạng thái <strong>Đã hết hạn</strong>.
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="voucher-action-bar">
+                    <a href="@Url.Action("Index", "MaGiamGia")"
+                       class="btn-voucher-back">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        Quay lại
+                    </a>
+
+                    <button type="submit" class="btn-voucher-save">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        Lưu Mã Giảm Giá
+                    </button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            function capNhatLoaiGiamGia() {
+                var loai = $('input[name="kieuGiamGia"]:checked').val();
+
+                if (loai === "PhanTram") {
+                    $('#groupPhanTramGiam').show();
+                    $('#groupSoTienGiamToiDa').show();
+                    $('#groupSoTienGiam').hide();
+
+                    $('#cardPercent').addClass('active');
+                    $('#cardMoney').removeClass('active');
+
+                    $('#soTienGiam').val('');
+                }
+                else {
+                    $('#groupPhanTramGiam').hide();
+                    $('#groupSoTienGiamToiDa').hide();
+                    $('#groupSoTienGiam').show();
+
+                    $('#cardMoney').addClass('active');
+                    $('#cardPercent').removeClass('active');
+
+                    $('#phanTramGiam').val('');
+                    $('#soTienGiamToiDa').val('');
+                }
+            }
+
+            $('input[name="kieuGiamGia"]').change(function () {
+                capNhatLoaiGiamGia();
+            });
+
+            capNhatLoaiGiamGia();
+        });
+    </script>
+}

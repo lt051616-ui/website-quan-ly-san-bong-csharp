@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="1896b7071603442ab6bbf12d37ab8f5d" Name="Diagram1" ZoomLevel="72">
+        <EntityTypeShape EntityType="QLSanBongModel.ChiTietDichVuDat" Width="1.5" PointX="5.25" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSanBongModel.DatSan" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSanBongModel.DichVu" Width="1.5" PointX="5.375" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSanBongModel.GiaTheoKhungGio" Width="1.5" PointX="6" PointY="4.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSanBongModel.KhungGio" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSanBongModel.NguoiDung" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="QLSanBongModel.SanBong" Width="1.5" PointX="0.75" PointY="8.25" IsExpanded="true" />
+        <AssociationConnector Association="QLSanBongModel.FK__ChiTietDi__MaDat__5070F446" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSanBongModel.FK__ChiTietDi__MaDic__5165187F" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSanBongModel.FK__DatSan__MaKhungG__49C3F6B7" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSanBongModel.FK__DatSan__MaNguoiD__47DBAE45" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSanBongModel.FK__DatSan__MaSan__48CFD27E" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSanBongModel.FK__GiaTheoKh__MaKhu__4316F928" ManuallyRouted="false" />
+        <AssociationConnector Association="QLSanBongModel.FK__GiaTheoKh__MaSan__4222D4EF" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="QLSanBongModel.MaGiamGia" Width="1.5" PointX="7.75" PointY="0.75" />
+        <AssociationConnector Association="QLSanBongModel.FK_DatSan_MaGiamGia" />
+        <EntityTypeShape EntityType="QLSanBongModel.ThongBao" Width="1.5" PointX="3" PointY="0.75" />
+        <AssociationConnector Association="QLSanBongModel.FK_ThongBao_NguoiDung" />
+        <EntityTypeShape EntityType="QLSanBongModel.CuocTroChuyen" Width="1.5" PointX="3" PointY="11.125" />
+        <EntityTypeShape EntityType="QLSanBongModel.TinNhan" Width="1.5" PointX="8.25" PointY="6" />
+        <AssociationConnector Association="QLSanBongModel.FK_CuocTroChuyen_KhachHang" />
+        <AssociationConnector Association="QLSanBongModel.FK_CuocTroChuyen_NhanVien" />
+        <AssociationConnector Association="QLSanBongModel.FK_TinNhan_CuocTroChuyen" />
+        <AssociationConnector Association="QLSanBongModel.FK_TinNhan_NguoiDung" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

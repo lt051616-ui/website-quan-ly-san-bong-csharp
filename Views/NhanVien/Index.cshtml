@@ -1,0 +1,138 @@
+﻿@model IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.NguoiDung>
+
+@{
+    ViewBag.Title = "Quản Lý Nhân Viên";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid" style="width: 100%; max-width: 1200px;">
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="font-weight: bold; color: #333; margin: 0;">👔 QUẢN LÝ NHÂN VIÊN</h2>
+        <button class="btn btn-success" data-toggle="modal" data-target="#modalThemNhanVien">
+            <i class="glyphicon glyphicon-plus"></i> Thêm Nhân Viên Mới
+        </button>
+    </div>
+
+    <!-- Alert Thông báo -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <!-- Thanh tìm kiếm -->
+    <div class="well" style="background-color: #fff; padding: 15px;">
+        <form method="get" action="@Url.Action("Index", "NhanVien")" class="form-inline">
+            <div class="form-group" style="width: 80%;">
+                <input type="text" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" style="width: 100%;" placeholder="Nhập tên hoặc số điện thoại nhân viên..." />
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="glyphicon glyphicon-search"></i> Tìm kiếm</button>
+        </form>
+    </div>
+
+    <!-- Bảng danh sách nhân viên -->
+    <div class="panel panel-default">
+        <div class="panel-body" style="padding: 0;">
+            <table class="table table-striped table-bordered table-hover" style="margin-bottom: 0;">
+                <thead>
+                    <tr style="background-color: #ff9966; color: #000;">
+                        <th class="text-center">Mã NV</th>
+                        <th>Họ và Tên</th>
+                        <th>Số Điện Thoại</th>
+                        <th>Email</th>
+                        <th class="text-center">Ngày Tạo</th>
+                        <th class="text-center">Trạng Thái</th>
+                        <th class="text-center">Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="text-center"><b>#@item.MaNguoiDung</b></td>
+                                <td><b>@item.HoTen</b></td>
+                                <td>@item.SoDienThoai</td>
+                                <td>@(string.IsNullOrEmpty(item.Email) ? "Chưa cập nhật" : item.Email)</td>
+                                <td class="text-center">@(item.NgayTao.HasValue ? item.NgayTao.Value.ToString("dd/MM/yyyy") : "")</td>
+                                <td class="text-center">
+                                    @if (item.TrangThai == "Hoạt động")
+                                    {
+                                        <span class="label label-success">Hoạt động</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-danger">Đã khóa</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <form action="@Url.Action("DoiTrangThai", "NhanVien", new { id = item.MaNguoiDung })" method="post" style="display:inline;">
+                                        @if (item.TrangThai == "Hoạt động")
+                                        {
+                                            <button type="submit" class="btn btn-warning btn-xs" onclick="return confirm('Bạn có chắc muốn khóa tài khoản nhân viên này?');">
+                                                🔒 Khóa
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit" class="btn btn-info btn-xs">
+                                                🔓 Mở khóa
+                                            </button>
+                                        }
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center">Chưa có nhân viên nào trong danh sách.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm Nhân Viên Mới (Đặt bên ngoài bảng table để tránh lỗi warning html) -->
+<div id="modalThemNhanVien" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="@Url.Action("ThemMoi", "NhanVien")" method="post">
+                <div class="modal-header" style="background-color: #ff9966;">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" style="font-weight: bold;">THÊM NHÂN VIÊN MỚI</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Họ và Tên <span class="text-danger">*</span></label>
+                        <input type="text" name="hoTen" class="form-control" required placeholder="Nhập tên nhân viên" />
+                    </div>
+                    <div class="form-group">
+                        <label>Số Điện Thoại (Tên đăng nhập) <span class="text-danger">*</span></label>
+                        <input type="text" name="soDienThoai" class="form-control" required placeholder="Nhập số điện thoại" />
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" name="email" class="form-control" placeholder="Nhập email nhân viên" />
+                    </div>
+                    <div class="form-group">
+                        <label>Mật Khẩu Đăng Nhập <span class="text-danger">*</span></label>
+                        <input type="password" name="matKhau" class="form-control" required placeholder="Nhập mật khẩu khởi tạo" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Lưu Nhân Viên</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

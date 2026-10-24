@@ -1,0 +1,450 @@
+﻿@model IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.ThongBao>
+
+@{
+    int soChuaDoc = 0;
+
+    if (ViewBag.SoChuaDoc != null)
+    {
+        soChuaDoc = Convert.ToInt32(ViewBag.SoChuaDoc);
+    }
+}
+
+<style>
+    /* =====================================================
+       KHUNG THÔNG BÁO
+       ===================================================== */
+
+    .notification-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+    /* =====================================================
+       NÚT CHUÔNG
+       ===================================================== */
+
+    .notification-button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        color: #005b46 !important;
+        font-size: 19px;
+        text-decoration: none !important;
+        transition: all 0.2s ease;
+    }
+
+        .notification-button:hover {
+            background: #edf7f4;
+            color: #007c5e !important;
+            text-decoration: none;
+        }
+
+
+    /* =====================================================
+       SỐ THÔNG BÁO CHƯA ĐỌC
+       ===================================================== */
+
+    .notification-number {
+        position: absolute;
+        top: -5px;
+        right: -6px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 10px;
+        background: #ff304f;
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        line-height: 18px;
+        text-align: center;
+        border: 2px solid white;
+    }
+
+
+    /* =====================================================
+       DROPDOWN
+       ===================================================== */
+
+    .notification-menu {
+        width: 390px !important;
+        right: 0 !important;
+        left: auto !important;
+        margin-top: 12px !important;
+        padding: 0 !important;
+        border: 1px solid #e4ece9 !important;
+        border-radius: 12px !important;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+    }
+
+
+    /* =====================================================
+       HEADER DROPDOWN
+       ===================================================== */
+
+    .notification-menu-header {
+        padding: 15px 16px;
+        border-bottom: 1px solid #e9efed;
+        background: #ffffff;
+        color: #173b32;
+        font-size: 15px;
+        font-weight: 700;
+        overflow: hidden;
+    }
+
+    .notification-header-count {
+        float: right;
+        padding: 3px 8px;
+        border-radius: 10px;
+        background: #e7f7f1;
+        color: #07865f;
+        font-size: 10px;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       ITEM THÔNG BÁO
+       ===================================================== */
+
+    .notification-item {
+        display: block !important;
+        padding: 13px 16px !important;
+        white-space: normal !important;
+        border-bottom: 1px solid #eeeeee;
+        text-decoration: none !important;
+        transition: background 0.15s ease;
+    }
+
+        .notification-item:hover {
+            background: #f5faf8 !important;
+        }
+
+    /* chưa đọc */
+    .notification-unread {
+        background: #edf9f5;
+    }
+
+
+    /* =====================================================
+       NỘI DUNG
+       ===================================================== */
+
+    .notification-item-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .notification-icon {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e7f7f1;
+        color: #007c5e;
+        font-size: 14px;
+    }
+
+    .notification-text {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-title {
+        color: #173b32;
+        font-size: 13px;
+        font-weight: 700;
+        line-height: 1.4;
+    }
+
+    .notification-content {
+        margin-top: 3px;
+        color: #667a74;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .notification-time {
+        display: block;
+        margin-top: 6px;
+        color: #99a7a2;
+        font-size: 10px;
+    }
+
+
+    /* chấm chưa đọc */
+
+    .notification-dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        margin-right: 5px;
+        border-radius: 50%;
+        background: #0aa36c;
+        vertical-align: 1px;
+    }
+
+
+    /* =====================================================
+       KHÔNG CÓ THÔNG BÁO
+       ===================================================== */
+
+    .notification-empty {
+        padding: 35px 20px;
+        text-align: center;
+        color: #83958f;
+    }
+
+        .notification-empty i {
+            display: block;
+            margin-bottom: 10px;
+            color: #a7bbb4;
+            font-size: 28px;
+        }
+
+
+    /* =====================================================
+       FOOTER
+       ===================================================== */
+
+    .notification-footer {
+        padding: 11px 15px;
+        background: #fafcfc;
+        text-align: center;
+    }
+
+        .notification-footer a {
+            color: #007c5e !important;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none !important;
+        }
+
+            .notification-footer a:hover {
+                color: #005b46 !important;
+            }
+
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @@media (max-width: 500px) {
+        .notification-menu {
+            width: 320px !important;
+        }
+    }
+</style>
+
+
+<div class="dropdown notification-box">
+
+    <!-- =====================================================
+         CHUÔNG
+         ===================================================== -->
+
+    <a href="#"
+       class="dropdown-toggle notification-button"
+       data-toggle="dropdown"
+       role="button"
+       aria-haspopup="true"
+       aria-expanded="false"
+       title="Thông báo">
+
+        <i class="fa-solid fa-bell"></i>
+
+
+        @if (soChuaDoc > 0)
+        {
+            <span class="notification-number">
+
+                @(soChuaDoc > 99
+                    ? "99+"
+                    : soChuaDoc.ToString())
+
+            </span>
+        }
+
+    </a>
+
+
+
+    <!-- =====================================================
+         DROPDOWN
+         ===================================================== -->
+
+    <ul class="dropdown-menu notification-menu">
+
+
+        <!-- HEADER -->
+
+        <li class="notification-menu-header">
+
+            <i class="fa-solid fa-bell"
+               style="
+                    color:#007c5e;
+                    margin-right:6px;">
+            </i>
+
+            Thông báo
+
+
+            @if (soChuaDoc > 0)
+            {
+                <span class="notification-header-count">
+
+                    @soChuaDoc chưa đọc
+
+                </span>
+            }
+
+        </li>
+
+
+
+        <!-- =================================================
+             DANH SÁCH THÔNG BÁO
+             ================================================= -->
+
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <li>
+
+                    <a href="@Url.Action(
+                                 "Xem",
+                                 "ThongBao",
+                                 new
+                                 {
+                                     id = item.MaThongBao
+                                 })"
+                       class="notification-item @(item.DaDoc ? "" : "notification-unread")">
+
+
+                        <div class="notification-item-row">
+
+
+                            <!-- ICON -->
+
+                            <div class="notification-icon">
+
+                                <i class="fa-solid fa-bell"></i>
+
+                            </div>
+
+
+
+                            <!-- NỘI DUNG -->
+
+                            <div class="notification-text">
+
+
+                                <div class="notification-title">
+
+                                    @if (!item.DaDoc)
+                                    {
+                                        <span class="notification-dot"></span>
+                                    }
+
+                                    @item.TieuDe
+
+                                </div>
+
+
+
+                                <div class="notification-content">
+
+                                    @item.NoiDung
+
+                                </div>
+
+
+
+                                <span class="notification-time">
+
+                                    <i class="fa-regular fa-clock"></i>
+
+                                    @item.NgayTao.ToString(
+                                        "dd/MM/yyyy HH:mm"
+                                    )
+
+                                </span>
+
+
+                            </div>
+
+                        </div>
+
+                    </a>
+
+                </li>
+            }
+        }
+        else
+        {
+            <!-- =================================================
+                 CHƯA CÓ THÔNG BÁO
+                 ================================================= -->
+
+            <li>
+
+                <div class="notification-empty">
+
+                    <i class="fa-regular fa-bell-slash"></i>
+
+                    <strong>
+                        Chưa có thông báo
+                    </strong>
+
+                    <div style="
+                        margin-top:4px;
+                        font-size:12px;">
+
+                        Các thông báo mới sẽ xuất hiện tại đây.
+
+                    </div>
+
+                </div>
+
+            </li>
+        }
+
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <li class="notification-footer">
+
+            <a href="@Url.Action(
+                         "Index",
+                         "ThongBao")">
+
+                <i class="fa-solid fa-list"
+                   style="margin-right:5px;">
+                </i>
+
+                Xem tất cả thông báo
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</div>

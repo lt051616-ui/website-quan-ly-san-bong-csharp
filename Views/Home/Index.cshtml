@@ -1,0 +1,618 @@
+﻿@{
+    ViewBag.Title = "Trang Chủ";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* =========================================
+        HOME
+    ========================================= */
+    .home {
+        max-width: 1400px;
+        margin: auto;
+    }
+
+    /* =========================================
+        HERO
+    ========================================= */
+    .hero {
+        position: relative;
+        height: 285px;
+        border-radius: 15px;
+        overflow: hidden;
+        margin-bottom: 22px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+    }
+
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        padding: 40px 35px;
+        display: flex;
+        align-items: center;
+        background: linear-gradient( 90deg, rgba(0,48,36,0.88), rgba(0,60,43,0.50), rgba(0,0,0,0.05) );
+    }
+
+    .hero-content {
+        color: white;
+        max-width: 600px;
+    }
+
+    .hero-tag {
+        display: inline-block;
+        padding: 8px 15px;
+        background: #078d59;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+
+    .hero h1 {
+        font-size: 35px;
+        font-weight: 900;
+        line-height: 1.1;
+        margin: 0 0 13px;
+        text-transform: uppercase;
+    }
+
+        .hero h1 span {
+            color: #42d96f;
+        }
+
+    .hero p {
+        font-size: 15px;
+        line-height: 1.6;
+        margin: 0 0 20px;
+    }
+
+    .btn-hero {
+        display: inline-flex;
+        align-items: center;
+        gap: 9px;
+        padding: 12px 22px;
+        border-radius: 25px;
+        background: linear-gradient(90deg,#35d36c,#8be95d);
+        color: #063e2e !important;
+        font-weight: 800;
+        text-decoration: none !important;
+        transition: 0.2s;
+    }
+
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+    /* =========================================
+        QUICK FEATURES
+    ========================================= */
+    .quick-row {
+        display: grid;
+        grid-template-columns: repeat(4,1fr);
+        gap: 16px;
+        margin-bottom: 25px;
+    }
+
+    .quick-card {
+        background: white;
+        border: 1px solid #e8efec;
+        border-radius: 12px;
+        padding: 17px;
+        min-height: 115px;
+        position: relative;
+        text-decoration: none !important;
+        display: block;
+        transition: 0.2s;
+    }
+
+        .quick-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+            border-color: #007c5e;
+        }
+
+    .quick-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e4f7ef;
+        color: #00865e;
+        font-size: 20px;
+        margin-bottom: 9px;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .quick-card:hover .quick-icon {
+        background: #007c5e;
+        color: #ffffff;
+    }
+
+    .quick-card h3 {
+        font-size: 15px;
+        margin: 0 0 5px;
+        font-weight: 800;
+        color: #144d3e;
+    }
+
+    .quick-card p {
+        margin: 0;
+        color: #789088;
+        font-size: 11px;
+    }
+
+    .quick-arrow {
+        position: absolute;
+        right: 15px;
+        top: 45px;
+        color: #07945d;
+        transition: transform 0.2s ease;
+    }
+
+    .quick-card:hover .quick-arrow {
+        transform: translateX(4px);
+    }
+
+    /* =========================================
+        SECTION TITLE
+    ========================================= */
+    .section-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-top: 1px solid #e7eeeb;
+        padding-top: 18px;
+        margin-bottom: 15px;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .section-title i {
+            color: #f7b51c;
+            font-size: 20px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 900;
+            color: #075f48;
+        }
+
+        .section-title p {
+            margin: 3px 0 0;
+            color: #82958e;
+            font-size: 11px;
+        }
+
+    .view-all {
+        color: #00895c;
+        text-decoration: none !important;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    /* =========================================
+        FIELD CARDS
+    ========================================= */
+    .field-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 20px;
+    }
+
+    .field-card {
+        background: white;
+        border-radius: 13px;
+        overflow: hidden;
+        border: 1px solid #e5ece9;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        transition: 0.2s;
+    }
+
+        .field-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.10);
+        }
+
+    .field-image {
+        height: 145px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .field-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .field-label {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        background: #07935e;
+        color: white;
+        border-radius: 20px;
+        padding: 7px 14px;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .field-body {
+        padding: 12px 14px;
+    }
+
+        .field-body h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #09644d;
+            font-weight: 900;
+        }
+
+    .field-row-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 1px solid #edf1ef;
+        padding: 8px 0;
+        color: #506a62;
+        font-size: 11px;
+    }
+
+        .field-row-info:last-of-type {
+            border-bottom: none;
+        }
+
+        .field-row-info i {
+            color: #07955e;
+            width: 18px;
+        }
+
+    .status {
+        background: #e3f7ed;
+        color: #008b5b;
+        padding: 4px 9px;
+        border-radius: 15px;
+        font-weight: bold;
+    }
+
+    .field-book {
+        float: right;
+        padding: 8px 15px;
+        border-radius: 20px;
+        background: #008b5b;
+        color: white !important;
+        text-decoration: none !important;
+        font-size: 11px;
+        font-weight: bold;
+    }
+
+        .field-book:hover {
+            background: #006e49;
+        }
+
+    /* =========================================
+        BOTTOM AREA
+    ========================================= */
+    .bottom-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        margin-top: 25px;
+    }
+
+    .info-box {
+        background: white;
+        border-radius: 14px;
+        border: 1px solid #e6eeeb;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+        .info-box h3 {
+            margin: 0 0 17px;
+            font-size: 17px;
+            color: #075d48;
+            font-weight: 900;
+        }
+
+    .stat-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+        .stat-list li {
+            display: flex;
+            align-items: center;
+            padding: 11px 0;
+            border-bottom: 1px solid #edf1ef;
+            font-size: 12px;
+        }
+
+            .stat-list li:last-child {
+                border-bottom: none;
+            }
+
+    .stat-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        background: #e8f7f0;
+        color: #008b5b;
+    }
+
+    .stat-number {
+        margin-left: auto;
+        font-weight: 900;
+        color: #075d48;
+    }
+
+    .promotion {
+        background: linear-gradient(135deg,#e7f8ef,#d4f2e4);
+        border-radius: 14px;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .promotion h3 {
+            margin: 0 0 8px;
+            color: #086348;
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .promotion p {
+            font-size: 12px;
+            color: #55776c;
+            line-height: 1.6;
+        }
+
+    .promotion-code {
+        display: inline-block;
+        margin-top: 8px;
+        background: #087e57;
+        color: white;
+        border-radius: 20px;
+        padding: 8px 15px;
+        font-size: 12px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+    @@media (max-width: 1100px) {
+        .quick-row {
+            grid-template-columns: repeat(2,1fr);
+        }
+
+        .field-grid {
+            grid-template-columns: repeat(2,1fr);
+        }
+
+        .bottom-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .hero {
+            height: 330px;
+        }
+
+            .hero h1 {
+                font-size: 27px;
+            }
+
+        .quick-row, .field-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .section-header {
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
+</style>
+
+
+<div class="home">
+
+    <!-- HERO BANNER -->
+    <section class="hero">
+        <img src="~/Content/images/sanbongmini.jpg" alt="Sân bóng đá" />
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <div class="hero-tag">HỆ THỐNG QUẢN LÝ SÂN BÓNG</div>
+                <h1>
+                    ĐẶT SÂN DỄ DÀNG<br />
+                    <span>TRẢI NGHIỆM TUYỆT VỜI</span>
+                </h1>
+                <p>
+                    Sân bóng chất lượng - Dịch vụ đa dạng - Thanh toán linh hoạt<br />
+                    Đặt sân ngay hôm nay để không bỏ lỡ những trận đấu hấp dẫn!
+                </p>
+                <a href="@Url.Action("Index", "DatSan")" class="btn-hero">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    Đặt sân ngay
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK FEATURES (ĐÃ ĐỒNG BỘ 4 Ô CHUẨN GRID) -->
+    <div class="quick-row">
+        <!-- 1. Xem sân -->
+        <a href="@Url.Action("DanhSachSan", "DanhSachSan")" class="quick-card">
+            <div class="quick-icon"><i class="fa-solid fa-futbol"></i></div>
+            <h3>Xem sân</h3>
+            <p>Khám phá các sân bóng có sẵn</p>
+            <i class="fa-solid fa-arrow-right quick-arrow"></i>
+        </a>
+
+        <!-- 2. Đặt sân -->
+        <a href="@Url.Action("Index", "DatSan")" class="quick-card">
+            <div class="quick-icon"><i class="fa-solid fa-calendar-check"></i></div>
+            <h3>Đặt sân</h3>
+            <p>Chọn ngày, khung giờ phù hợp</p>
+            <i class="fa-solid fa-arrow-right quick-arrow"></i>
+        </a>
+
+        <!-- 3. Dịch vụ -->
+        <a href="@Url.Action("Index", "DichVu")" class="quick-card">
+            <div class="quick-icon"><i class="fa-solid fa-glass-water"></i></div>
+            <h3>Dịch vụ</h3>
+            <p>Nước uống, thuê áo, thuê bóng...</p>
+            <i class="fa-solid fa-arrow-right quick-arrow"></i>
+        </a>
+
+        <!-- 4. Mã giảm giá -->
+        <a href="@Url.Action("Index", "MaGiamGia")" class="quick-card">
+            <div class="quick-icon"><i class="fa-solid fa-gift"></i></div>
+            <h3>Mã giảm giá</h3>
+            <p>Ưu đãi cho khách hàng thân thiết</p>
+            <i class="fa-solid fa-arrow-right quick-arrow"></i>
+        </a>
+    </div>
+
+    <!-- SÂN NỔI BẬT -->
+    <div class="section-header">
+        <div class="section-title">
+            <i class="fa-solid fa-star"></i>
+            <div>
+                <h2>Sân nổi bật</h2>
+                <p>Các sân được nhiều khách hàng lựa chọn nhất</p>
+            </div>
+        </div>
+        <a href="@Url.Action("DanhSachSan", "DanhSachSan")" class="view-all">
+            Xem tất cả <i class="fa-solid fa-arrow-right"></i>
+        </a>
+    </div>
+
+    <div class="field-grid">
+        <!-- SÂN A1 -->
+        <div class="field-card">
+            <div class="field-image">
+                <img src="~/Content/images/sanbongmini.jpg" alt="Sân A1" />
+                <div class="field-label">⚽ Sân A1</div>
+            </div>
+            <div class="field-body">
+                <h3>Sân A1</h3>
+                <div class="field-row-info">
+                    <i class="fa-solid fa-futbol"></i>
+                    <strong>Loại sân:</strong> <span>Sân 5 người</span>
+                </div>
+                <div class="field-row-info">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <strong>Trạng thái:</strong> <span class="status">Hoạt động</span>
+                </div>
+                <br />
+                <a href="@Url.Action("Index", "DatSan")" class="field-book">
+                    Đặt sân <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+
+        <!-- SÂN A2 -->
+        <div class="field-card">
+            <div class="field-image">
+                <img src="~/Content/images/sanbongmini.jpg" alt="Sân A2" />
+                <div class="field-label">⚽ Sân A2</div>
+            </div>
+            <div class="field-body">
+                <h3>Sân A2</h3>
+                <div class="field-row-info">
+                    <i class="fa-solid fa-futbol"></i>
+                    <strong>Loại sân:</strong> <span>Sân 5 người</span>
+                </div>
+                <div class="field-row-info">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <strong>Trạng thái:</strong> <span class="status">Hoạt động</span>
+                </div>
+                <br />
+                <a href="@Url.Action("Index", "DatSan")" class="field-book">
+                    Đặt sân <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+
+        <!-- SÂN B1 -->
+        <div class="field-card">
+            <div class="field-image">
+                <img src="~/Content/images/sanbongmini.jpg" alt="Sân B1" />
+                <div class="field-label">⚽ Sân B1</div>
+            </div>
+            <div class="field-body">
+                <h3>Sân B1</h3>
+                <div class="field-row-info">
+                    <i class="fa-solid fa-futbol"></i>
+                    <strong>Loại sân:</strong> <span>Sân 7 người</span>
+                </div>
+                <div class="field-row-info">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <strong>Trạng thái:</strong> <span class="status">Hoạt động</span>
+                </div>
+                <br />
+                <a href="@Url.Action("Index", "DatSan")" class="field-book">
+                    Đặt sân <i class="fa-solid fa-arrow-right"></i>
+                </a>
+                <div style="clear:both;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- THÔNG TIN + KHUYẾN MÃI -->
+    <div class="bottom-grid">
+        <div class="info-box">
+            <h3><i class="fa-solid fa-bolt" style="color:#07935e;"></i> &nbsp; Thông tin nhanh</h3>
+            <ul class="stat-list">
+                <li>
+                    <div class="stat-icon"><i class="fa-solid fa-futbol"></i></div>
+                    Tổng số sân <span class="stat-number">6</span>
+                </li>
+                <li>
+                    <div class="stat-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    Sân 5 người <span class="stat-number">2</span>
+                </li>
+                <li>
+                    <div class="stat-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    Sân 7 người <span class="stat-number">2</span>
+                </li>
+                <li>
+                    <div class="stat-icon"><i class="fa-solid fa-location-dot"></i></div>
+                    Sân 11 người <span class="stat-number">2</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="promotion">
+            <h3>🎁 Ưu đãi đặc biệt</h3>
+            <p>Mã giảm giá dành cho khách hàng thân thiết và các dịp lễ, sự kiện đặc biệt.</p>
+            <a href="@Url.Action("Index", "MaGiamGia")" class="promotion-code">
+                <i class="fa-solid fa-ticket"></i> XEM MÃ GIẢM GIÁ
+            </a>
+        </div>
+    </div>
+
+</div>

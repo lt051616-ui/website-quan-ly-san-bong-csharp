@@ -1,0 +1,96 @@
+﻿@{
+    ViewBag.Title = "Cấu Hình Hệ Thống";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid" style="padding: 20px;">
+    <h3 style="color: #2e7d32; font-weight: bold; margin-bottom: 25px;">
+        <i class="glyphicon glyphicon-cog"></i> CẤU HÌNH TRANG CHỦ
+    </h3>
+
+    <div class="row">
+        <!-- Cột trái: Thông tin sân bóng -->
+        <div class="col-md-6">
+            <div class="panel panel-primary" style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="height: 160px; overflow: hidden;">
+                    <img src="https://images.unsplash.com/photo-1577223625816-7546f13df25d?q=80&w=800"
+                         alt="Thông tin sân bóng"
+                         style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div class="panel-heading" style="font-weight: bold; background-color: #337ab7;">
+                    <i class="glyphicon glyphicon-info-sign"></i> Thông Tin Sân Bóng
+                </div>
+                <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Tên cơ sở sân bóng:</label>
+                            <input type="text" class="form-control" value="Sân Bóng Đá Mini TopCode" />
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại Hotline:</label>
+                            <input type="text" class="form-control" value="0909 123 456" />
+                        </div>
+                        <div class="form-group">
+                            <label>Địa chỉ:</label>
+                            <input type="text" class="form-control" value="123 Đường Số 1, Phường 5, TP.HCM" />
+                        </div>
+                        <div class="form-group">
+                            <label>Quy định đặt sân & Ghi chú:</label>
+                            <textarea class="form-control" rows="3">Vui lòng đến trước 10 phút. Hủy sân trước 2 tiếng để hoàn cọc.</textarea>
+                        </div>
+                        <button type="button" class="btn btn-primary" style="font-weight: bold;">
+                            <i class="glyphicon glyphicon-floppy-disk"></i> Lưu Thông Tin
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cột phải: Cấu hình khung giờ & Cài đặt -->
+        <div class="col-md-6">
+            <div class="panel panel-success" style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                <div style="height: 160px; overflow: hidden;">
+                    <img src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?q=80&w=800"
+                         alt="Cấu hình khung giờ"
+                         style="width: 100%; height: 100%; object-fit: cover;" />
+                </div>
+                <div class="panel-heading" style="font-weight: bold; background-color: #5cb85c; color: white;">
+                    <i class="glyphicon glyphicon-time"></i> Thiết Lập Khung Giờ & Phân Quyền
+                </div>
+                <div class="panel-body">
+                    <form>
+                        <div class="form-group">
+                            <label>Giờ mở cửa:</label>
+                            <input type="time" class="form-control" value="06:00" />
+                        </div>
+                        <div class="form-group">
+                            <label>Giờ đóng cửa:</label>
+                            <input type="time" class="form-control" value="23:00" />
+                        </div>
+                        <div class="form-group">
+                            <label>Khung giờ cao điểm (Giá tăng 20%):</label>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <input type="time" class="form-control" value="17:00" />
+                                </div>
+                                <div class="col-xs-6">
+                                    <input type="time" class="form-control" value="21:00" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Tự động duyệt đặt sân:</label>
+                            <select class="form-control">
+                                <option value="true">Bật (Xác nhận ngay)</option>
+                                <option value="false">Tắt (Cần Admin duyệt)</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn btn-success" style="font-weight: bold;">
+                            <i class="glyphicon glyphicon-floppy-disk"></i> Cập Nhật Cấu Hình
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

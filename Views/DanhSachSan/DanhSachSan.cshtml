@@ -1,0 +1,677 @@
+﻿@model IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.SanBong>
+
+@{
+    ViewBag.Title = "Sân Bóng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var vaiTro = Session["VaiTro"] != null
+        ? Session["VaiTro"].ToString()
+        : "KhachHang";
+
+    bool laAdmin = vaiTro == "Admin";
+    bool laNhanVien = vaiTro == "NhanVien";
+    bool laKhachHang = vaiTro == "KhachHang";
+}
+
+<style>
+    .field-page {
+        min-height: calc(100vh - 50px);
+        padding: 30px;
+        background: #f4faf7;
+    }
+
+    .field-header {
+        background: linear-gradient(135deg, #087f5b, #18a66f);
+        color: white;
+        border-radius: 18px;
+        padding: 28px 35px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 7px 20px rgba(0, 80, 50, 0.15);
+    }
+
+        .field-header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .field-header p {
+            margin: 8px 0 0;
+            font-size: 16px;
+        }
+
+    .field-header-decoration {
+        position: absolute;
+        right: 35px;
+        top: -15px;
+        font-size: 120px;
+        opacity: 0.12;
+    }
+
+    .field-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
+    }
+
+    .field-card {
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #e2eee8;
+        box-shadow: 0 5px 18px rgba(0, 70, 50, 0.09);
+        transition: all .25s ease;
+    }
+
+        .field-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 100, 70, 0.15);
+        }
+
+    .field-image-box {
+        width: 100%;
+        height: 210px;
+        position: relative;
+        overflow: hidden;
+        background: #eee;
+    }
+
+    .field-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .field-name-badge {
+        position: absolute;
+        left: 15px;
+        top: 15px;
+        z-index: 5;
+        background: #078f61;
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-size: 15px;
+        font-weight: 700;
+        box-shadow: 0 3px 8px rgba(0,0,0,.2);
+    }
+
+    .field-content {
+        padding: 20px;
+    }
+
+    .field-title {
+        font-size: 21px;
+        font-weight: 800;
+        color: #075c45;
+        margin-bottom: 12px;
+    }
+
+    .field-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 0;
+        border-bottom: 1px solid #edf2ef;
+        color: #536a62;
+        font-size: 14px;
+    }
+
+        .field-info:last-child {
+            border-bottom: none;
+        }
+
+    .field-icon {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        background: #e6f8f0;
+        color: #078d60;
+        flex-shrink: 0;
+    }
+
+    .field-price {
+        color: #d53b32;
+        font-weight: 800;
+        font-size: 15px;
+    }
+
+    .status-active,
+    .status-maintenance,
+    .status-inactive {
+        display: inline-block;
+        padding: 5px 11px;
+        margin-left: 5px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .status-active {
+        background: #e5f7ed;
+        color: #078b5d;
+    }
+
+    .status-maintenance {
+        background: #fff2cc;
+        color: #9a6c00;
+    }
+
+    .status-inactive {
+        background: #fde8e8;
+        color: #d9363e;
+    }
+
+    .field-footer {
+        padding: 0 20px 20px;
+    }
+
+    .btn-book-field {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 46px;
+        background: #087f5b;
+        color: white !important;
+        border: none;
+        border-radius: 10px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none !important;
+    }
+
+        .btn-book-field:hover {
+            background: #066b4c;
+        }
+
+        .btn-book-field.disabled {
+            background: #b7c3bf;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+    .admin-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+        .admin-actions .btn {
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .admin-actions form {
+            margin: 0;
+        }
+
+            .admin-actions form .btn {
+                width: 100%;
+            }
+
+    .admin-help {
+        margin-bottom: 22px;
+        padding: 13px 16px;
+        border-radius: 10px;
+        border: 1px solid #cfe9dc;
+        background: #eef9f3;
+        color: #346455;
+    }
+
+    .empty-field {
+        background: white;
+        border-radius: 16px;
+        padding: 55px;
+        text-align: center;
+        box-shadow: 0 5px 18px rgba(0,0,0,.06);
+    }
+
+    .modal .form-group label {
+        color: #24483d;
+    }
+
+    @@media (max-width: 1100px) {
+        .field-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @@media (max-width: 700px) {
+        .field-page {
+            padding: 15px;
+        }
+
+        .field-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .field-header {
+            padding: 25px;
+        }
+
+            .field-header h1 {
+                font-size: 25px;
+            }
+
+        .field-header-decoration {
+            display: none;
+        }
+
+        .admin-actions {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="field-page">
+
+    @if (TempData["ThanhCong"] != null)
+    {
+        <div class="alert alert-success">
+            <i class="fa fa-check-circle"></i>
+            @TempData["ThanhCong"]
+        </div>
+    }
+
+    @if (TempData["Loi"] != null)
+    {
+        <div class="alert alert-danger">
+            <i class="fa fa-exclamation-triangle"></i>
+            @TempData["Loi"]
+        </div>
+    }
+
+    <div class="field-header">
+        <div class="field-header-decoration">⚽</div>
+
+        <h1>
+            ⚽
+            @if (laAdmin)
+            {
+                @:QUẢN LÝ SÂN BÓNG
+            }
+            else if (laNhanVien)
+            {
+                @:TRA CỨU SÂN BÓNG
+            }
+            else
+            {
+                @:DANH SÁCH SÂN BÓNG
+            }
+        </h1>
+
+        <p>
+            @if (laAdmin)
+            {
+                @:Cập nhật thông tin, đơn giá và trạng thái hoạt động của từng sân.
+            }
+            else if (laNhanVien)
+            {
+                @:Theo dõi thông tin và trạng thái hiện tại của các sân bóng.
+            }
+            else
+            {
+                @:Lựa chọn sân bóng phù hợp và đặt lịch nhanh chóng.
+            }
+        </p>
+    </div>
+
+    @if (laAdmin)
+    {
+        <div class="admin-help">
+            <i class="fa fa-circle-info"></i>
+            <strong>Quản trị sân:</strong>
+            Sân chuyển sang <b>Bảo trì</b> hoặc <b>Ngừng hoạt động</b>
+            sẽ không nhận đơn đặt sân mới. Các đơn đã tồn tại không tự động bị hủy.
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="field-grid">
+
+            @foreach (var item in Model)
+            {
+                bool dangHoatDong =
+                    item.TrangThai == "Hoạt động" ||
+                    item.TrangThai == "Trống" ||
+                    item.TrangThai == "Sẵn sàng";
+
+                bool dangBaoTri =
+                    item.TrangThai == "Bảo trì";
+
+                string statusClass =
+                    dangHoatDong
+                        ? "status-active"
+                        : dangBaoTri
+                            ? "status-maintenance"
+                            : "status-inactive";
+
+                <div class="field-card">
+
+                    <div class="field-image-box">
+                        <img src="@Url.Content("~/Content/images/sanbongmini.jpg")"
+                             alt="@item.TenSan"
+                             class="field-image" />
+
+                        <div class="field-name-badge">
+                            ⚽ @item.TenSan
+                        </div>
+                    </div>
+
+                    <div class="field-content">
+
+                        <div class="field-title">
+                            @item.TenSan
+                        </div>
+
+                        <div class="field-info">
+                            <span class="field-icon">
+                                <i class="fa fa-users"></i>
+                            </span>
+
+                            <span>
+                                <strong>Loại sân:</strong>
+                                @item.LoaiSan
+                            </span>
+                        </div>
+
+                        <div class="field-info">
+                            <span class="field-icon">
+                                <i class="fa fa-money-bill-wave"></i>
+                            </span>
+
+                            <span>
+                                <strong>Đơn giá:</strong>
+                                <span class="field-price">
+                                    @if (item.DonGiaTheoGio.HasValue)
+                                    {
+                                        @String.Format("{0:N0} VNĐ/giờ", item.DonGiaTheoGio.Value)
+                                    }
+                                    else
+                                    {
+                                        @:Chưa cấu hình
+                                    }
+                                </span>
+                            </span>
+                        </div>
+
+                        <div class="field-info">
+                            <span class="field-icon">
+                                <i class="fa fa-circle-check"></i>
+                            </span>
+
+                            <span>
+                                <strong>Trạng thái:</strong>
+                                <span class="@statusClass">
+                                    @item.TrangThai
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="field-footer">
+
+                        @if (laAdmin)
+                        {
+                            <div class="admin-actions">
+
+                                <button type="button"
+                                        class="btn btn-primary"
+                                        data-toggle="modal"
+                                        data-target="#modalSuaSan_@item.MaSan">
+                                    <i class="fa fa-pen"></i>
+                                    Sửa thông tin
+                                </button>
+
+                                @if (dangHoatDong)
+                                {
+                                    using (Html.BeginForm(
+                                        "DoiTrangThaiSan",
+                                        "DanhSachSan",
+                                        FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="maSan"
+                                               value="@item.MaSan" />
+
+                                        <input type="hidden"
+                                               name="trangThaiMoi"
+                                               value="Bảo trì" />
+
+                                        <button type="submit"
+                                                class="btn btn-warning"
+                                                onclick="return confirm('Chuyển @item.TenSan sang trạng thái Bảo trì? Sân sẽ không nhận đơn mới.');">
+                                            <i class="fa fa-screwdriver-wrench"></i>
+                                            Bảo trì
+                                        </button>
+                                    }
+                                }
+                                else
+                                {
+                                    using (Html.BeginForm(
+                                        "DoiTrangThaiSan",
+                                        "DanhSachSan",
+                                        FormMethod.Post))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden"
+                                               name="maSan"
+                                               value="@item.MaSan" />
+
+                                        <input type="hidden"
+                                               name="trangThaiMoi"
+                                               value="Hoạt động" />
+
+                                        <button type="submit"
+                                                class="btn btn-success">
+                                            <i class="fa fa-circle-play"></i>
+                                            Mở lại sân
+                                        </button>
+                                    }
+                                }
+
+                            </div>
+                        }
+                        else if (laKhachHang)
+                        {
+                            if (dangHoatDong)
+                            {
+                                <a href="@Url.Action(
+                                    "Index",
+                                    "DatSan",
+                                    new { maSan = item.MaSan })"
+                                   class="btn-book-field">
+
+                                    <i class="fa fa-calendar"></i>
+
+                                    <span style="margin-left:8px;">
+                                        Chọn sân đặt lịch
+                                    </span>
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="btn-book-field disabled">
+                                    <i class="fa fa-ban"></i>
+                                    <span style="margin-left:8px;">
+                                        Sân hiện không nhận đặt lịch
+                                    </span>
+                                </span>
+                            }
+                        }
+                        else if (laNhanVien)
+                        {
+                            <div class="text-center"
+                                 style="padding:10px; color:#667b74;">
+                                <i class="fa fa-eye"></i>
+                                Chỉ tra cứu thông tin sân
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+                if (laAdmin)
+                {
+                    <div class="modal fade"
+                         id="modalSuaSan_@item.MaSan"
+                         tabindex="-1"
+                         role="dialog">
+
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+
+                                @using (Html.BeginForm(
+                                    "CapNhatSan",
+                                    "DanhSachSan",
+                                    FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    <div class="modal-header"
+                                         style="background:#087f5b; color:white;">
+
+                                        <button type="button"
+                                                class="close"
+                                                data-dismiss="modal"
+                                                style="color:white; opacity:1;">
+                                            &times;
+                                        </button>
+
+                                        <h4 class="modal-title"
+                                            style="font-weight:800;">
+                                            <i class="fa fa-pen"></i>
+                                            Cập nhật @item.TenSan
+                                        </h4>
+                                    </div>
+
+                                    <div class="modal-body">
+
+                                        <input type="hidden"
+                                               name="maSan"
+                                               value="@item.MaSan" />
+
+                                        <div class="form-group">
+                                            <label>Tên sân *</label>
+                                            <input type="text"
+                                                   name="tenSan"
+                                                   value="@item.TenSan"
+                                                   class="form-control"
+                                                   maxlength="100"
+                                                   required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Loại sân *</label>
+                                            <select name="loaiSan"
+                                                    class="form-control"
+                                                    required>
+
+                                                <option value="Sân 5"
+                                                        @(item.LoaiSan == "Sân 5" ? "selected" : "")>
+                                                    Sân 5
+                                                </option>
+
+                                                <option value="Sân 7"
+                                                        @(item.LoaiSan == "Sân 7" ? "selected" : "")>
+                                                    Sân 7
+                                                </option>
+
+                                                <option value="Sân 11"
+                                                        @(item.LoaiSan == "Sân 11" ? "selected" : "")>
+                                                    Sân 11
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Đơn giá theo giờ (VNĐ) *</label>
+                                            <input type="number"
+                                                   name="donGiaTheoGio"
+                                                   value="@(item.DonGiaTheoGio ?? 0)"
+                                                   class="form-control"
+                                                   min="1000"
+                                                   step="1000"
+                                                   required />
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Trạng thái *</label>
+                                            <select name="trangThai"
+                                                    class="form-control"
+                                                    required>
+
+                                                <option value="Hoạt động"
+                                                        @(item.TrangThai == "Hoạt động" ? "selected" : "")>
+                                                    Hoạt động
+                                                </option>
+
+                                                <option value="Bảo trì"
+                                                        @(item.TrangThai == "Bảo trì" ? "selected" : "")>
+                                                    Bảo trì
+                                                </option>
+
+                                                <option value="Ngừng hoạt động"
+                                                        @(item.TrangThai == "Ngừng hoạt động" ? "selected" : "")>
+                                                    Ngừng hoạt động
+                                                </option>
+                                            </select>
+                                        </div>
+
+                                        <div class="alert alert-info"
+                                             style="margin-bottom:0;">
+                                            <i class="fa fa-circle-info"></i>
+                                            Khi sân không ở trạng thái
+                                            <b>Hoạt động</b>, hệ thống đặt sân
+                                            sẽ không cho tạo đơn mới cho sân đó.
+                                        </div>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button"
+                                                class="btn btn-default"
+                                                data-dismiss="modal">
+                                            Đóng
+                                        </button>
+
+                                        <button type="submit"
+                                                class="btn btn-success">
+                                            <i class="fa fa-save"></i>
+                                            Lưu thay đổi
+                                        </button>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="empty-field">
+            <div style="font-size:55px; margin-bottom:15px;">⚽</div>
+            <h3 style="color:#075c45; font-weight:800;">
+                Chưa có sân bóng
+            </h3>
+            <p style="color:#718078;">
+                Hiện chưa có sân bóng nào trong hệ thống.
+            </p>
+        </div>
+    }
+
+</div>

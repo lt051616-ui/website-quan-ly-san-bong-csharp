@@ -1,0 +1,183 @@
+﻿@{
+    ViewBag.Title = "Thống Kê & Báo Cáo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .thongke-container {
+        width: 100%;
+        max-width: 1100px;
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        color: #333;
+    }
+
+    .card-stat {
+        border-radius: 6px;
+        color: #fff;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .card-blue {
+        background-color: #337ab7;
+    }
+
+    .card-green {
+        background-color: #5cb85c;
+    }
+
+    .card-orange {
+        background-color: #f0ad4e;
+    }
+
+    .card-red {
+        background-color: #d9534f;
+    }
+
+    .card-stat h3 {
+        margin: 5px 0 10px 0;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    .card-stat p {
+        margin: 0;
+        font-size: 14px;
+        text-transform: uppercase;
+        opacity: 0.9;
+    }
+
+    .chart-box {
+        background: #f9f9f9;
+        border: 1px solid #e3e3e3;
+        border-radius: 6px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .filter-bar {
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="thongke-container">
+    <h2 class="text-center" style="margin-top:0; margin-bottom: 25px; font-weight:bold; color:#2c3e50;">
+        📊 BÁO CÁO & THỐNG KÊ DOANH THU
+    </h2>
+
+    <div class="filter-bar">
+        <form class="form-inline text-center" method="get" action="@Url.Action("Index", "ThongKe")">
+            <div class="form-group" style="margin-right: 15px;">
+                <label for="tuNgay">Từ ngày: </label>
+                <input type="date" class="form-control" id="tuNgay" name="tuNgay" value="@ViewBag.TuNgay">
+            </div>
+            <div class="form-group" style="margin-right: 15px;">
+                <label for="denNgay">Đến ngày: </label>
+                <input type="date" class="form-control" id="denNgay" name="denNgay" value="@ViewBag.DenNgay">
+            </div>
+            <button type="submit" class="btn btn-primary">
+                <i class="glyphicon glyphicon-filter"></i> Lọc dữ liệu
+            </button>
+        </form>
+    </div>
+
+    <!-- 4 Thẻ Thống Kê Động -->
+    <div class="row">
+        <div class="col-md-3 col-sm-6">
+            <div class="card-stat card-green">
+                <p>Tổng Doanh Thu</p>
+                <h3>@string.Format("{0:N0}", ViewBag.TongDoanhThu) đ</h3>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card-stat card-blue">
+                <p>Tổng Lượt Đặt Sân</p>
+                <h3>@ViewBag.TongLuotDat lượt</h3>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card-stat card-orange">
+                <p>Khách Hàng Mới</p>
+                <h3>@ViewBag.KhachHangMoi người</h3>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6">
+            <div class="card-stat card-red">
+                <p>Tỷ Lệ Lấp Đầy</p>
+                <h3>@ViewBag.TyLeLapDien%</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu Đồ Động -->
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-7">
+            <div class="chart-box">
+                <h4 class="text-center" style="font-weight:bold; margin-bottom:15px;">Doanh Thu Theo Tháng (VNĐ)</h4>
+                <canvas id="revenueChart" height="180"></canvas>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="chart-box">
+                <h4 class="text-center" style="font-weight:bold; margin-bottom:15px;">Tỷ Lệ Sử Dụng Loại Sân</h4>
+                <canvas id="pitchTypeChart" height="255"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        // Lấy dữ liệu JSON từ Controller
+        const dataDoanhThuThang = @Html.Raw(ViewBag.DataDoanhThuThang);
+        const labelsLoaiSan = @Html.Raw(ViewBag.LabelsLoaiSan);
+        const dataLoaiSan = @Html.Raw(ViewBag.DataLoaiSan);
+
+        // 1. Biểu đồ Doanh Thu Cột
+        const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctxRevenue, {
+            type: 'bar',
+            data: {
+                labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                datasets: [{
+                    label: 'Doanh Thu (VNĐ)',
+                    data: dataDoanhThuThang,
+                    backgroundColor: '#5cb85c',
+                    borderColor: '#4cae4c',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // 2. Biểu đồ Tròn Loại Sân
+        const ctxPitch = document.getElementById('pitchTypeChart').getContext('2d');
+        new Chart(ctxPitch, {
+            type: 'doughnut',
+            data: {
+                labels: labelsLoaiSan,
+                datasets: [{
+                    data: dataLoaiSan,
+                    backgroundColor: ['#337ab7', '#f0ad4e', '#d9534f', '#5bc0de', '#5cb85c']
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    </script>
+}

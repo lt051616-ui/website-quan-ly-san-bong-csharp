@@ -1,0 +1,1606 @@
+﻿@model IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.SanBong>
+
+@using System.Linq
+@using System.Web.Helpers
+@using System.Globalization
+
+@{
+    string vaiTro = Session["VaiTro"] != null
+        ? Session["VaiTro"].ToString()
+        : "";
+
+    bool laNhanVien = vaiTro == "NhanVien";
+
+    ViewBag.Title = laNhanVien
+        ? "Đặt sân cho khách"
+        : "Đặt sân bóng";
+
+
+    var dichVus =
+        ViewBag.DichVu
+        as IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.DichVu>;
+
+    var danhSachDichVuJson = "[]";
+
+    if (dichVus != null)
+    {
+        var ds = dichVus
+            .Select(d => new
+            {
+                MaDichVu = d.MaDichVu,
+                TenDichVu = d.TenDichVu,
+                DonGia = d.DonGia,
+                SoLuongTon = d.SoLuongTon
+            })
+            .ToList();
+
+        danhSachDichVuJson = Json.Encode(ds);
+    }
+
+    string ngayMin =
+        ViewBag.NgayDatToiThieu != null
+            ? ViewBag.NgayDatToiThieu.ToString()
+            : DateTime.Today.ToString("yyyy-MM-dd");
+
+    string ngayMax =
+        ViewBag.NgayDatToiDa != null
+            ? ViewBag.NgayDatToiDa.ToString()
+            : DateTime.Today.AddDays(7).ToString("yyyy-MM-dd");
+}
+
+<style>
+    .booking-new-page {
+        padding: 28px;
+        min-height: calc(100vh - 60px);
+        background: #f5f8f7;
+    }
+
+    .page-title-box {
+        background: linear-gradient(135deg, #087f5b, #13a865);
+        color: #fff;
+        border-radius: 18px;
+        padding: 26px 30px;
+        margin-bottom: 24px;
+        box-shadow: 0 10px 28px rgba(0, 90, 58, .14);
+    }
+
+        .page-title-box h1 {
+            margin: 0 0 7px;
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        .page-title-box p {
+            margin: 0;
+            opacity: .94;
+            font-size: 15px;
+        }
+
+    .field-grid-new {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .field-card-new {
+        background: #fff;
+        border: 1px solid #dde8e3;
+        border-radius: 18px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: .22s ease;
+        box-shadow: 0 6px 20px rgba(28, 77, 57, .08);
+    }
+
+        .field-card-new:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 13px 30px rgba(28, 77, 57, .14);
+            border-color: #19a85d;
+        }
+
+    .field-photo {
+        width: 100%;
+        height: 205px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .field-card-body {
+        padding: 18px;
+    }
+
+    .field-card-name {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 8px;
+    }
+
+        .field-card-name h3 {
+            margin: 0;
+            color: #173b31;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+    .field-type-pill {
+        background: #e9f8ef;
+        color: #14864c;
+        border: 1px solid #bfe8cd;
+        border-radius: 999px;
+        padding: 4px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .field-hour-price {
+        color: #d43d37;
+        font-size: 16px;
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    .field-meta {
+        color: #5b6f68;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .btn-open-booking {
+        width: 100%;
+        margin-top: 14px;
+        height: 46px;
+        border: 0;
+        border-radius: 10px;
+        background: #13a657;
+        color: white;
+        font-weight: 800;
+        font-size: 15px;
+    }
+
+        .btn-open-booking:hover {
+            background: #0f8d49;
+        }
+
+    /* MODAL */
+    .booking-modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        background: rgba(22, 36, 32, .56);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 22px;
+        overflow-y: auto;
+    }
+
+        .booking-modal-backdrop.show {
+            display: flex;
+        }
+
+    .booking-modal {
+        width: min(1060px, 96vw);
+        max-height: 94vh;
+        overflow-y: auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, .28);
+        position: relative;
+    }
+
+    .modal-close-btn {
+        position: absolute;
+        top: 18px;
+        right: 20px;
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 50%;
+        background: #f2f5f4;
+        color: #263933;
+        font-size: 22px;
+        z-index: 4;
+    }
+
+    .modal-inner {
+        padding: 24px;
+    }
+
+    .modal-field-head {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-right: 50px;
+    }
+
+        .modal-field-head img {
+            width: 175px;
+            height: 104px;
+            object-fit: cover;
+            border-radius: 11px;
+        }
+
+        .modal-field-head h2 {
+            margin: 0 0 8px;
+            color: #142f27;
+            font-size: 26px;
+            font-weight: 850;
+        }
+
+    .head-meta {
+        color: #566a62;
+        font-size: 14px;
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .booking-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 350px;
+        gap: 26px;
+    }
+
+    .selector-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+        margin-bottom: 22px;
+    }
+
+    .control-title {
+        display: block;
+        color: #283f38;
+        font-size: 15px;
+        font-weight: 800;
+        margin-bottom: 9px;
+    }
+
+    .modal-date-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #d3ded9;
+        border-radius: 10px;
+        padding: 0 14px;
+        font-size: 15px;
+        outline: none;
+    }
+
+    .duration-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .duration-btn {
+        flex: 1;
+        height: 48px;
+        border: 1px solid #d8e1dd;
+        border-radius: 10px;
+        background: #f8faf9;
+        color: #344b43;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+        .duration-btn.active {
+            border-color: #18aa5b;
+            background: #e9faef;
+            color: #118447;
+            box-shadow: 0 0 0 1px #18aa5b inset;
+        }
+
+    .slot-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+        .slot-title strong {
+            color: #283f38;
+            font-size: 16px;
+        }
+
+    .slot-loading {
+        font-size: 12px;
+        color: #82918b;
+    }
+
+    .time-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .time-slot {
+        position: relative;
+        min-height: 54px;
+        border: 1px solid #b8dfc7;
+        border-radius: 9px;
+        background: #fff;
+        color: #203830;
+        font-weight: 800;
+        cursor: pointer;
+        padding: 8px 6px;
+        transition: .18s;
+    }
+
+        .time-slot:hover:not(:disabled) {
+            background: #edf9f1;
+            border-color: #18aa5b;
+        }
+
+        .time-slot.selected {
+            background: #14aa56;
+            border-color: #14aa56;
+            color: #fff;
+        }
+
+        .time-slot:disabled {
+            cursor: not-allowed;
+            background: #f4f5f5;
+            color: #9ca8a3;
+            border-color: #e1e5e3;
+        }
+
+        .time-slot.booked:disabled {
+            background: #fff1f0;
+            border-color: #f1aaa5;
+            color: #8b6a67;
+        }
+
+        .time-slot .slot-reason {
+            display: block;
+            margin-top: 2px;
+            font-size: 10px;
+            color: #e1473f;
+            font-weight: 700;
+        }
+
+        .time-slot.selected .slot-reason {
+            color: #fff;
+        }
+
+    .slot-legend {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+        color: #677972;
+        font-size: 12px;
+    }
+
+    .legend-box {
+        display: inline-block;
+        width: 22px;
+        height: 16px;
+        border-radius: 4px;
+        margin-right: 6px;
+        vertical-align: -3px;
+    }
+
+    .legend-free {
+        border: 1px solid #19ad5c;
+        background: #effaf3;
+    }
+
+    .legend-past {
+        border: 1px solid #d9dddd;
+        background: #f4f5f5;
+    }
+
+    .legend-booked {
+        border: 1px solid #f0a6a0;
+        background: #fff0ef;
+    }
+
+    .addon-box {
+        margin-top: 22px;
+        border-top: 1px solid #edf0ef;
+        padding-top: 18px;
+    }
+
+    .addon-toggle {
+        width: 100%;
+        border: none;
+        background: transparent;
+        padding: 0;
+        text-align: left;
+        color: #1f3b32;
+        font-weight: 800;
+        font-size: 15px;
+    }
+
+    .addon-content {
+        margin-top: 12px;
+        display: none;
+    }
+
+    .service-mini-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+    }
+
+        .service-mini-table th,
+        .service-mini-table td {
+            padding: 9px;
+            border-bottom: 1px solid #edf0ef;
+        }
+
+    .service-qty {
+        width: 75px;
+        height: 34px;
+        border: 1px solid #d5dfda;
+        border-radius: 7px;
+        padding: 0 8px;
+    }
+
+    .voucher-mini {
+        display: flex;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+        .voucher-mini input {
+            flex: 1;
+            height: 40px;
+            border: 1px solid #d5dfda;
+            border-radius: 8px;
+            padding: 0 10px;
+            text-transform: uppercase;
+        }
+
+        .voucher-mini button {
+            border: none;
+            border-radius: 8px;
+            background: #166e4d;
+            color: #fff;
+            font-weight: 700;
+            padding: 0 16px;
+        }
+
+    .voucher-msg {
+        font-size: 12px;
+        margin-top: 7px;
+        min-height: 18px;
+    }
+
+    /* SUMMARY */
+    .summary-card {
+        border: 1px solid #dce5e1;
+        border-radius: 13px;
+        padding: 20px;
+        position: sticky;
+        top: 0;
+        align-self: start;
+        background: #fff;
+    }
+
+    .summary-title {
+        color: #183b30;
+        font-size: 20px;
+        font-weight: 850;
+        margin-bottom: 15px;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px solid #edf0ef;
+        color: #3f524c;
+    }
+
+        .summary-row strong {
+            color: #243a33;
+            text-align: right;
+        }
+
+    .summary-total {
+        padding-top: 17px;
+        margin-top: 7px;
+        border-top: 2px solid #dfe5e2;
+    }
+
+    .summary-total-label {
+        font-size: 18px;
+        font-weight: 850;
+        color: #243a33;
+    }
+
+    .summary-total-value {
+        text-align: right;
+        color: #14a953;
+        font-size: 27px;
+        font-weight: 900;
+        margin: 9px 0 18px;
+    }
+
+
+    .staff-payment-box {
+        margin-top: 18px;
+        padding-top: 16px;
+        border-top: 1px solid #edf0ef;
+    }
+
+    .staff-payment-title {
+        margin-bottom: 10px;
+        color: #243a33;
+        font-size: 15px;
+        font-weight: 850;
+    }
+
+    .staff-payment-options {
+        display: grid;
+        gap: 8px;
+    }
+
+    .staff-payment-option {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 11px 12px;
+        border: 1px solid #dce6e1;
+        border-radius: 9px;
+        background: #fafcfb;
+        cursor: pointer;
+        transition: .15s ease;
+    }
+
+        .staff-payment-option:hover {
+            border-color: #18a85a;
+            background: #f1fbf5;
+        }
+
+        .staff-payment-option input[type="radio"] {
+            margin-top: 3px;
+        }
+
+        .staff-payment-option strong {
+            display: block;
+            color: #264239;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .staff-payment-option small {
+            display: block;
+            color: #7a8a84;
+            line-height: 1.35;
+        }
+
+    .staff-payment-summary {
+        margin-top: 10px;
+        padding: 9px 10px;
+        border-radius: 8px;
+        background: #eef8f2;
+        color: #24643f;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .btn-confirm-modal {
+        width: 100%;
+        height: 54px;
+        border: none;
+        border-radius: 10px;
+        background: #13a956;
+        color: #fff;
+        font-size: 17px;
+        font-weight: 850;
+    }
+
+        .btn-confirm-modal:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
+    .cancel-note {
+        text-align: center;
+        margin-top: 12px;
+        color: #8b9994;
+        font-size: 12px;
+    }
+
+
+    .staff-customer-box {
+        margin: 0 0 20px;
+        padding: 18px;
+        border: 1px solid #d8e7df;
+        border-radius: 14px;
+        background: #f8fcfa;
+    }
+
+    .staff-customer-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 6px;
+        color: #176844;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .staff-customer-note {
+        margin-bottom: 14px;
+        color: #66756f;
+        font-size: 12px;
+    }
+
+    .staff-customer-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 1.4fr;
+        gap: 14px;
+        align-items: end;
+    }
+
+    .staff-customer-field label {
+        display: block;
+        margin-bottom: 6px;
+        color: #294d40;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .staff-customer-input,
+    .staff-customer-select {
+        width: 100%;
+        height: 40px;
+        padding: 8px 10px;
+        border: 1px solid #ccdcd4;
+        border-radius: 8px;
+        background: #fff;
+        outline: none;
+    }
+
+        .staff-customer-input:focus,
+        .staff-customer-select:focus {
+            border-color: #1ca763;
+            box-shadow: 0 0 0 2px rgba(28, 167, 99, .10);
+        }
+
+    .staff-customer-detail {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 14px;
+    }
+
+    .staff-customer-detail-item {
+        padding: 10px 12px;
+        border: 1px solid #e1ebe6;
+        border-radius: 9px;
+        background: #fff;
+        min-width: 0;
+    }
+
+        .staff-customer-detail-item small {
+            display: block;
+            margin-bottom: 3px;
+            color: #87958f;
+        }
+
+        .staff-customer-detail-item strong {
+            display: block;
+            overflow: hidden;
+            color: #263f36;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    @@media (max-width: 1000px) {
+        .field-grid-new {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .booking-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-card {
+            position: static;
+        }
+    }
+
+    @@media (max-width: 680px) {
+        .booking-new-page {
+            padding: 14px;
+        }
+
+        .field-grid-new {
+            grid-template-columns: 1fr;
+        }
+
+        .modal-inner {
+            padding: 16px;
+        }
+
+        .modal-field-head {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+            .modal-field-head img {
+                width: 100%;
+                height: 160px;
+            }
+
+        .selector-row {
+            grid-template-columns: 1fr;
+        }
+
+        .time-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .staff-customer-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .staff-customer-detail {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="booking-new-page">
+
+    <div class="page-title-box">
+        @if (laNhanVien)
+        {
+            <h1>⚽ Đặt sân cho khách</h1>
+            <p>Nhập thông tin khách hàng, sau đó chọn sân, ngày, thời lượng và giờ bắt đầu để tạo đơn.</p>
+        }
+        else
+        {
+            <h1>⚽ Đặt sân bóng</h1>
+            <p>Chọn sân, ngày, thời lượng và giờ bắt đầu phù hợp với bạn.</p>
+        }
+    </div>
+
+    @if (TempData["Loi"] != null)
+    {
+        <div class="alert alert-danger">
+            <strong>@TempData["Loi"]</strong>
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="field-grid-new">
+            @foreach (var san in Model)
+            {
+                decimal donGia = san.DonGiaTheoGio ?? 0m;
+
+                <div class="field-card-new js-open-field"
+                     data-masan="@san.MaSan"
+                     data-tensan="@san.TenSan"
+                     data-loaisan="@san.LoaiSan"
+                     data-dongia="@donGia.ToString(CultureInfo.InvariantCulture)">
+
+                    <img src="@Url.Content("~/Content/images/sanbongmini.jpg")"
+                         class="field-photo"
+                         alt="@san.TenSan" />
+
+                    <div class="field-card-body">
+                        <div class="field-card-name">
+                            <h3>@san.TenSan</h3>
+                            <span class="field-type-pill">@san.LoaiSan</span>
+                        </div>
+
+                        <div class="field-hour-price">
+                            @if (donGia > 0)
+                            {
+                                @String.Format("{0:N0} VNĐ/giờ", donGia)
+                            }
+                            else
+                            {
+                                @:Chưa cấu hình giá/giờ
+                            }
+                        </div>
+
+                        <div class="field-meta">
+                            <div><i class="fa fa-futbol-o"></i> @san.LoaiSan</div>
+                            <div><i class="fa fa-check-circle"></i> @san.TrangThai</div>
+                        </div>
+
+                        <button type="button"
+                                class="btn-open-booking">
+                            Chọn sân
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Hiện chưa có sân hoạt động.</div>
+    }
+</div>
+
+<!-- =========================================================
+     MODAL ĐẶT SÂN
+     ========================================================= -->
+<div id="bookingModal" class="booking-modal-backdrop">
+    <div class="booking-modal">
+
+        <button type="button"
+                id="btnCloseModal"
+                class="modal-close-btn"
+                title="Đóng">
+            ×
+        </button>
+
+        @using (Html.BeginForm(
+            "XacNhanDatSan",
+            "DatSan",
+            FormMethod.Post,
+            new { id = "formDatSanMoi" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="modal-inner">
+
+                <div class="modal-field-head">
+                    <img src="@Url.Content("~/Content/images/sanbongmini.jpg")"
+                         alt="Sân bóng" />
+
+                    <div>
+                        <h2 id="modalTenSan">Đặt sân</h2>
+                        <div class="head-meta">
+                            <span>⚽ <span id="modalLoaiSan">-</span></span>
+                            <span>🌱 Cỏ nhân tạo</span>
+                            <span>▦ <strong id="modalDonGia">0 VNĐ/giờ</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                @if (laNhanVien)
+                {
+                    <div class="staff-customer-box">
+                        <div class="staff-customer-title">
+                            <i class="fa fa-user"></i>
+                            Thông tin khách hàng
+                        </div>
+
+                        <div class="staff-customer-note">
+                            Nhân viên nhập trực tiếp thông tin khách đến đặt sân.
+                            Khách chưa có tài khoản vẫn có thể đặt bình thường.
+                        </div>
+
+                        <div class="staff-customer-detail">
+                            <div class="staff-customer-field">
+                                <label for="HoTenKhachHang">
+                                    Họ tên <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="text"
+                                       id="HoTenKhachHang"
+                                       name="HoTenKhachHang"
+                                       class="staff-customer-input"
+                                       maxlength="100"
+                                       required
+                                       placeholder="Nhập họ tên khách hàng..." />
+                            </div>
+
+                            <div class="staff-customer-field">
+                                <label for="SoDienThoaiKhachHang">
+                                    Số điện thoại <span class="text-danger">*</span>
+                                </label>
+
+                                <input type="tel"
+                                       id="SoDienThoaiKhachHang"
+                                       name="SoDienThoaiKhachHang"
+                                       class="staff-customer-input"
+                                       maxlength="20"
+                                       required
+                                       placeholder="Ví dụ: 0901234567" />
+                            </div>
+
+                            <div class="staff-customer-field">
+                                <label for="EmailKhachHang">
+                                    Email
+                                </label>
+
+                                <input type="email"
+                                       id="EmailKhachHang"
+                                       name="EmailKhachHang"
+                                       class="staff-customer-input"
+                                       maxlength="150"
+                                       placeholder="Không bắt buộc" />
+                            </div>
+                        </div>
+
+                        <div style="margin-top:10px; font-size:11px; color:#74847d;">
+                            Nếu SĐT hoặc email trùng với một tài khoản Khách hàng đã có,
+                            hệ thống sẽ tự liên kết đơn với tài khoản đó.
+                        </div>
+                    </div>
+                }
+
+                <div class="booking-layout">
+
+                    <!-- CỘT TRÁI -->
+                    <div>
+                        <div class="selector-row">
+                            <div>
+                                <label class="control-title">
+                                    <i class="fa fa-calendar"></i>
+                                    Chọn ngày đặt sân
+                                </label>
+
+                                <input type="date"
+                                       id="modalNgayDat"
+                                       name="NgayDat"
+                                       value="@ngayMin"
+                                       min="@ngayMin"
+                                       max="@ngayMax"
+                                       class="modal-date-input"
+                                       required />
+                            </div>
+
+                            <div>
+                                <label class="control-title">
+                                    <i class="fa fa-hourglass-half"></i>
+                                    Chọn thời lượng
+                                </label>
+
+                                <div class="duration-group">
+                                    <button type="button"
+                                            class="duration-btn active"
+                                            data-minutes="60">
+                                        1 giờ
+                                    </button>
+
+                                    <button type="button"
+                                            class="duration-btn"
+                                            data-minutes="90">
+                                        1.5 giờ
+                                    </button>
+
+                                    <button type="button"
+                                            class="duration-btn"
+                                            data-minutes="120">
+                                        2 giờ
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slot-title">
+                            <strong>
+                                <i class="fa fa-clock-o"></i>
+                                Chọn giờ bắt đầu
+                            </strong>
+                            <span id="slotLoading" class="slot-loading"></span>
+                        </div>
+
+                        <div id="timeGrid" class="time-grid"></div>
+
+                        <div class="slot-legend">
+                            <span><i class="legend-box legend-free"></i> Giờ có thể đặt</span>
+                            <span><i class="legend-box legend-past"></i> Giờ đã qua</span>
+                            <span><i class="legend-box legend-booked"></i> Giờ đã có người đặt</span>
+                        </div>
+
+                        <!-- DỊCH VỤ + MÃ GIẢM GIÁ -->
+                        <div class="addon-box">
+                            <button type="button"
+                                    id="btnToggleAddon"
+                                    class="addon-toggle">
+                                + Dịch vụ đi kèm &amp; mã giảm giá (tùy chọn)
+                            </button>
+
+                            <div id="addonContent" class="addon-content">
+                                @if (dichVus != null && dichVus.Any())
+                                {
+                                    <table class="service-mini-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Dịch vụ</th>
+                                                <th>Đơn giá</th>
+                                                <th>Tồn</th>
+                                                <th>Số lượng</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{ int dvIndex = 0; }
+                                            @foreach (var dv in dichVus)
+                                            {
+                                                <tr>
+                                                    <td>@dv.TenDichVu</td>
+                                                    <td>@String.Format("{0:N0} VNĐ", dv.DonGia)</td>
+                                                    <td>@dv.SoLuongTon</td>
+                                                    <td>
+                                                        <input type="hidden"
+                                                               name="dsChon[0].DichVus[@dvIndex].MaDichVu"
+                                                               value="@dv.MaDichVu" />
+
+                                                        <input type="number"
+                                                               class="service-qty js-service-qty"
+                                                               name="dsChon[0].DichVus[@dvIndex].SoLuong"
+                                                               value="0"
+                                                               min="0"
+                                                               max="@dv.SoLuongTon"
+                                                               data-price="@dv.DonGia.ToString(CultureInfo.InvariantCulture)" />
+                                                    </td>
+                                                </tr>
+                                                dvIndex++;
+                                            }
+                                        </tbody>
+                                    </table>
+                                }
+                                else
+                                {
+                                    <div class="text-muted">Hiện chưa có dịch vụ khả dụng.</div>
+                                }
+
+                                <div class="voucher-mini">
+                                    <input type="text"
+                                           id="txtVoucherModal"
+                                           placeholder="Nhập mã giảm giá..."
+                                           maxlength="50" />
+
+                                    <button type="button"
+                                            id="btnApplyVoucherModal">
+                                        Áp dụng
+                                    </button>
+                                </div>
+
+                                <div id="voucherMsgModal" class="voucher-msg"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CỘT TÓM TẮT -->
+                    <div class="summary-card">
+                        <div class="summary-title">
+                            ▤ Tóm tắt đặt sân
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Sân</span>
+                            <strong id="sumSan">-</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Ngày</span>
+                            <strong id="sumNgay">-</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Giờ bắt đầu</span>
+                            <strong id="sumGioBatDau">-</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Giờ kết thúc</span>
+                            <strong id="sumGioKetThuc">-</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Thời lượng</span>
+                            <strong id="sumThoiLuong">1 giờ</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Đơn giá</span>
+                            <strong id="sumDonGia">0 VNĐ/giờ</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Tiền sân</span>
+                            <strong id="sumTienSan">0 VNĐ</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Dịch vụ</span>
+                            <strong id="sumDichVu">0 VNĐ</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Giảm giá</span>
+                            <strong id="sumGiamGia">0 VNĐ</strong>
+                        </div>
+
+                        @if (laNhanVien)
+                        {
+                            <div class="staff-payment-box">
+                                <div class="staff-payment-title">
+                                    <i class="fa fa-credit-card"></i>
+                                    Thanh toán của khách
+                                </div>
+
+                                <div class="staff-payment-options">
+
+                                    <label class="staff-payment-option">
+                                        <input type="radio"
+                                               name="ThanhToanNhanVien"
+                                               value="TienMat"
+                                               required />
+
+                                        <span>
+                                            <strong>Đã thanh toán tiền mặt</strong>
+                                            <small>
+                                                Nhân viên đã thu đủ tiền mặt của khách.
+                                            </small>
+                                        </span>
+                                    </label>
+
+                                    <label class="staff-payment-option">
+                                        <input type="radio"
+                                               name="ThanhToanNhanVien"
+                                               value="ChuyenKhoan" />
+
+                                        <span>
+                                            <strong>Đã thanh toán chuyển khoản</strong>
+                                            <small>
+                                                Nhân viên đã kiểm tra và xác nhận đã nhận chuyển khoản.
+                                            </small>
+                                        </span>
+                                    </label>
+
+                                </div>
+
+                                <div class="staff-payment-summary">
+                                    <b>Trạng thái:</b>
+                                    <span id="sumThanhToanNhanVien">
+                                        Chưa chọn phương thức thanh toán.
+                                    </span>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="summary-total">
+                            <div class="summary-total-label">
+                                Tổng thanh toán
+                            </div>
+
+                            <div id="sumTongTien"
+                                 class="summary-total-value">
+                                0 VNĐ
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                                id="btnConfirmBooking"
+                                class="btn-confirm-modal"
+                                disabled>
+                            <i class="fa fa-calendar-check-o"></i>
+                            @(laNhanVien ? "Tạo đơn & xác nhận" : "Xác nhận đặt sân")
+                        </button>
+
+                        <div class="cancel-note">
+                            @if (laNhanVien)
+                            {
+                                @:✓ Đơn do Nhân viên tạo sẽ được xác nhận ngay và không đi qua màn hình QR.
+                            }
+                            else
+                            {
+                                @:🛡 Hủy trước 2 giờ miễn phí đối với đơn chưa thanh toán
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INPUT ẨN GỬI VỀ CONTROLLER -->
+                <input type="hidden"
+                       id="hiddenMaSan"
+                       name="dsChon[0].MaSan" />
+
+                <input type="hidden"
+                       id="hiddenGioBatDau"
+                       name="dsChon[0].GioBatDau" />
+
+                <input type="hidden"
+                       id="hiddenGioKetThuc"
+                       name="dsChon[0].GioKetThuc" />
+
+                <input type="hidden"
+                       id="hiddenMaGiamGiaModal"
+                       name="MaGiamGia" />
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+$(function () {
+
+    var currentField = null;
+    var durationMinutes = 60;
+    var selectedStart = "";
+    var selectedEnd = "";
+    var fieldAmount = 0;
+    var discountAmount = 0;
+    var isStaff = @((laNhanVien ? "true" : "false"));
+
+    function formatMoney(value) {
+        value = parseFloat(value) || 0;
+        return value.toLocaleString("vi-VN") + " VNĐ";
+    }
+
+    function formatDateVN(value) {
+        if (!value) return "-";
+        var p = value.split("-");
+        if (p.length !== 3) return value;
+        return p[2] + "/" + p[1] + "/" + p[0];
+    }
+
+    function durationLabel() {
+        if (durationMinutes === 60) return "1 giờ";
+        if (durationMinutes === 90) return "1.5 giờ";
+        return "2 giờ";
+    }
+
+    function serviceTotal() {
+        var total = 0;
+
+        $(".js-service-qty").each(function () {
+            var qty = parseInt($(this).val()) || 0;
+            var price = parseFloat($(this).data("price")) || 0;
+            total += qty * price;
+        });
+
+        return total;
+    }
+
+    function resetVoucher() {
+        discountAmount = 0;
+        $("#hiddenMaGiamGiaModal").val("");
+        $("#txtVoucherModal").val("");
+        $("#voucherMsgModal").text("").css("color", "");
+    }
+
+    function updateStaffPaymentSummary() {
+        if (!isStaff) return;
+
+        var value =
+            $("input[name='ThanhToanNhanVien']:checked").val();
+
+        var text = "Chưa chọn phương thức thanh toán.";
+
+        if (value === "TienMat") {
+            text = "Đã thanh toán bằng tiền mặt.";
+        }
+        else if (value === "ChuyenKhoan") {
+            text = "Đã thanh toán bằng chuyển khoản.";
+        }
+
+        $("#sumThanhToanNhanVien").text(text);
+    }
+
+    function updateSummary() {
+        updateStaffPaymentSummary();
+
+        var service = serviceTotal();
+        var beforeDiscount = fieldAmount + service;
+
+        if (discountAmount > beforeDiscount) {
+            discountAmount = beforeDiscount;
+        }
+
+        var total = beforeDiscount - discountAmount;
+        if (total < 0) total = 0;
+
+        $("#sumSan").text(currentField ? currentField.tenSan : "-");
+        $("#sumNgay").text(formatDateVN($("#modalNgayDat").val()));
+        $("#sumGioBatDau").text(selectedStart || "-");
+        $("#sumGioKetThuc").text(selectedEnd || "-");
+        $("#sumThoiLuong").text(durationLabel());
+        $("#sumDonGia").text(currentField ? formatMoney(currentField.donGia) + "/giờ" : "0 VNĐ/giờ");
+        $("#sumTienSan").text(formatMoney(fieldAmount));
+        $("#sumDichVu").text(formatMoney(service));
+        $("#sumGiamGia").text(discountAmount > 0 ? "-" + formatMoney(discountAmount) : "0 VNĐ");
+        $("#sumTongTien").text(formatMoney(total));
+
+        var thieuThongTinKhach =
+            isStaff &&
+            (
+                !$.trim($("#HoTenKhachHang").val()) ||
+                !$.trim($("#SoDienThoaiKhachHang").val())
+            );
+
+        var thieuThanhToanNhanVien =
+            isStaff &&
+            !$("input[name='ThanhToanNhanVien']:checked").val();
+
+        $("#btnConfirmBooking").prop(
+            "disabled",
+            !currentField ||
+            !selectedStart ||
+            !selectedEnd ||
+            thieuThongTinKhach ||
+            thieuThanhToanNhanVien
+        );
+    }
+
+    function clearSelectedTime() {
+        selectedStart = "";
+        selectedEnd = "";
+        fieldAmount = 0;
+        $("#hiddenGioBatDau").val("");
+        $("#hiddenGioKetThuc").val("");
+        resetVoucher();
+        updateSummary();
+    }
+
+    function loadSlots() {
+        if (!currentField) return;
+
+        clearSelectedTime();
+        $("#timeGrid").empty();
+        $("#slotLoading").text("Đang kiểm tra lịch trống...");
+
+        $.ajax({
+            url: '@Url.Action("LayLichTrong", "DatSan")',
+            type: 'GET',
+            data: {
+                maSan: currentField.maSan,
+                ngayDat: $("#modalNgayDat").val(),
+                soPhut: durationMinutes
+            },
+            success: function (res) {
+                $("#slotLoading").text("");
+
+                if (!res || res.success === false) {
+                    alert(res && res.message ? res.message : "Không thể tải lịch sân.");
+                    return;
+                }
+
+                fieldAmount = parseFloat(res.giaDuKien) || 0;
+
+                $.each(res.slots || [], function (_, slot) {
+                    var btn = $("<button type='button' class='time-slot'></button>");
+
+                    btn.attr("data-start", slot.gioBatDau);
+                    btn.attr("data-end", slot.gioKetThuc);
+                    btn.append($("<span></span>").text(slot.gioBatDau));
+
+                    if (!slot.coTheDat) {
+                        btn.prop("disabled", true);
+
+                        if (slot.lyDo === "Đã đặt") {
+                            btn.addClass("booked");
+                        }
+
+                        if (slot.lyDo) {
+                            btn.append(
+                                $("<span class='slot-reason'></span>").text(slot.lyDo)
+                            );
+                        }
+                    }
+
+                    $("#timeGrid").append(btn);
+                });
+
+                fieldAmount = 0;
+                updateSummary();
+            },
+            error: function () {
+                $("#slotLoading").text("");
+                alert("Không thể kiểm tra lịch trống của sân.");
+            }
+        });
+    }
+
+    function openModal(card) {
+        var donGia = parseFloat(card.data("dongia")) || 0;
+
+        if (donGia <= 0) {
+            alert("Sân này chưa được cấu hình đơn giá theo giờ.");
+            return;
+        }
+
+        currentField = {
+            maSan: card.data("masan"),
+            tenSan: card.data("tensan"),
+            loaiSan: card.data("loaisan"),
+            donGia: donGia
+        };
+
+        durationMinutes = 60;
+        $(".duration-btn").removeClass("active");
+        $(".duration-btn[data-minutes='60']").addClass("active");
+
+        $("#modalTenSan").text("Đặt " + currentField.tenSan);
+        $("#modalLoaiSan").text(currentField.loaiSan);
+        $("#modalDonGia").text(formatMoney(currentField.donGia) + "/giờ");
+        $("#hiddenMaSan").val(currentField.maSan);
+
+        $(".js-service-qty").val(0);
+        resetVoucher();
+
+        if (isStaff) {
+            $("input[name='ThanhToanNhanVien']")
+                .prop("checked", false);
+
+            updateStaffPaymentSummary();
+        }
+
+        clearSelectedTime();
+
+        $("#bookingModal").addClass("show");
+        $("body").css("overflow", "hidden");
+
+        updateSummary();
+        loadSlots();
+    }
+
+    function closeModal() {
+        $("#bookingModal").removeClass("show");
+        $("body").css("overflow", "");
+    }
+
+    $(document).on("click", ".js-open-field", function (e) {
+        e.preventDefault();
+        openModal($(this));
+    });
+
+    $("#btnCloseModal").on("click", closeModal);
+
+    $("#bookingModal").on("click", function (e) {
+        if (e.target === this) {
+            closeModal();
+        }
+    });
+
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape") {
+            closeModal();
+        }
+    });
+
+    $(".duration-btn").on("click", function () {
+        durationMinutes = parseInt($(this).data("minutes")) || 60;
+
+        $(".duration-btn").removeClass("active");
+        $(this).addClass("active");
+
+        resetVoucher();
+        updateSummary();
+        loadSlots();
+    });
+
+    $("#modalNgayDat").on("change", function () {
+        resetVoucher();
+        loadSlots();
+    });
+
+    $(document).on("click", ".time-slot:not(:disabled)", function () {
+        $(".time-slot").removeClass("selected");
+        $(this).addClass("selected");
+
+        selectedStart = $(this).data("start");
+        selectedEnd = $(this).data("end");
+
+        $("#hiddenGioBatDau").val(selectedStart);
+        $("#hiddenGioKetThuc").val(selectedEnd);
+
+        fieldAmount = currentField.donGia * (durationMinutes / 60.0);
+        resetVoucher();
+        updateSummary();
+    });
+
+    $("#btnToggleAddon").on("click", function () {
+        $("#addonContent").slideToggle(150);
+    });
+
+    $(document).on("input change", ".js-service-qty", function () {
+        var max = parseInt($(this).attr("max")) || 0;
+        var value = parseInt($(this).val()) || 0;
+
+        if (value < 0) value = 0;
+        if (value > max) value = max;
+        $(this).val(value);
+
+        resetVoucher();
+        updateSummary();
+    });
+
+    $("#btnApplyVoucherModal").on("click", function () {
+        var code = $.trim($("#txtVoucherModal").val()).toUpperCase();
+
+        if (!code) {
+            $("#voucherMsgModal")
+                .css("color", "#d43d37")
+                .text("Vui lòng nhập mã giảm giá.");
+            return;
+        }
+
+        var totalBeforeDiscount = fieldAmount + serviceTotal();
+
+        if (totalBeforeDiscount <= 0) {
+            $("#voucherMsgModal")
+                .css("color", "#d43d37")
+                .text("Vui lòng chọn giờ đặt sân trước.");
+            return;
+        }
+
+        $.ajax({
+            url: '@Url.Action("ApDungMaGiamGia", "DatSan")',
+            type: 'POST',
+            data: {
+                maCode: code,
+                tongTien: totalBeforeDiscount,
+                ngayDat: $("#modalNgayDat").val(),
+                __RequestVerificationToken:
+                    $("#formDatSanMoi input[name='__RequestVerificationToken']").val()
+            },
+            success: function (res) {
+                if (res && res.success) {
+                    discountAmount = parseFloat(res.tienGiam) || 0;
+                    $("#hiddenMaGiamGiaModal").val(res.maCode || code);
+                    $("#voucherMsgModal")
+                        .css("color", "#14864c")
+                        .text(res.message || "Áp dụng mã giảm giá thành công.");
+                    updateSummary();
+                }
+                else {
+                    discountAmount = 0;
+                    $("#hiddenMaGiamGiaModal").val("");
+                    $("#voucherMsgModal")
+                        .css("color", "#d43d37")
+                        .text(res && res.message ? res.message : "Mã giảm giá không hợp lệ.");
+                    updateSummary();
+                }
+            },
+            error: function () {
+                $("#voucherMsgModal")
+                    .css("color", "#d43d37")
+                    .text("Không thể kiểm tra mã giảm giá.");
+            }
+        });
+    });
+
+    $("#HoTenKhachHang, #SoDienThoaiKhachHang, #EmailKhachHang")
+        .on("input change", function () {
+            updateSummary();
+        });
+
+    $("input[name='ThanhToanNhanVien']").on("change", function () {
+        updateSummary();
+    });
+
+    $("#formDatSanMoi").on("submit", function (e) {
+        if (isStaff) {
+            var hoTenKhach =
+                $.trim($("#HoTenKhachHang").val());
+
+            var soDienThoaiKhach =
+                $.trim($("#SoDienThoaiKhachHang").val());
+
+            if (!hoTenKhach || !soDienThoaiKhach) {
+                e.preventDefault();
+                alert("Vui lòng nhập Họ tên và Số điện thoại khách hàng.");
+                return false;
+            }
+
+            if (!$("input[name='ThanhToanNhanVien']:checked").val()) {
+                e.preventDefault();
+                alert("Vui lòng chọn trạng thái thanh toán của khách.");
+                return false;
+            }
+        }
+
+        if (!currentField || !selectedStart || !selectedEnd) {
+            e.preventDefault();
+            alert("Vui lòng chọn sân và giờ bắt đầu.");
+            return false;
+        }
+
+        $("#btnConfirmBooking")
+            .prop("disabled", true)
+            .html('<i class="fa fa-spinner fa-spin"></i> Đang tạo đơn...');
+    });
+});
+    </script>
+}

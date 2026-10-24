@@ -1,0 +1,568 @@
+﻿@using System.Linq
+
+@model IEnumerable<Phân_Tích_Thiết_Kế_Website_QL_Sân_Bóng.Models.ThongBao>
+
+@{
+    ViewBag.Title = "Thông Báo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int tongThongBao = Model != null
+        ? Model.Count()
+        : 0;
+
+    int soChuaDoc = Model != null
+        ? Model.Count(x => x.DaDoc == false)
+        : 0;
+}
+
+<style>
+
+    /* =====================================================
+       PAGE
+       ===================================================== */
+
+    .notification-page {
+        max-width: 1000px;
+        margin: 0 auto;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .notification-page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 22px;
+    }
+
+    .notification-page-title h2 {
+        margin: 0;
+        color: #173b32;
+        font-size: 28px;
+        font-weight: 800;
+    }
+
+    .notification-page-title p {
+        margin: 7px 0 0;
+        color: #748780;
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       BUTTON
+       ===================================================== */
+
+    .btn-read-all {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 15px;
+        background: #e8f7f1;
+        color: #007c5e;
+        font-size: 13px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+        .btn-read-all:hover {
+            background: #d7f1e7;
+            color: #00694f;
+        }
+
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    .notification-summary {
+        display: flex;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .summary-box {
+        flex: 1;
+        background: white;
+        border: 1px solid #e6efec;
+        border-radius: 13px;
+        padding: 16px 18px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+    }
+
+    .summary-label {
+        color: #748780;
+        font-size: 12px;
+    }
+
+    .summary-number {
+        margin-top: 4px;
+        color: #173b32;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+        .summary-number.green {
+            color: #07865f;
+        }
+
+
+    /* =====================================================
+       CARD
+       ===================================================== */
+
+    .notification-list-card {
+        overflow: hidden;
+        background: white;
+        border: 1px solid #e6efec;
+        border-radius: 15px;
+        box-shadow: 0 7px 22px rgba(0,0,0,0.06);
+    }
+
+
+    /* =====================================================
+       ITEM
+       ===================================================== */
+
+    .notification-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        padding: 18px 20px;
+        border-bottom: 1px solid #edf2f0;
+        transition: background 0.2s ease;
+    }
+
+        .notification-row:last-child {
+            border-bottom: none;
+        }
+
+        .notification-row:hover {
+            background: #f7fbfa;
+        }
+
+        .notification-row.unread {
+            background: #edf9f5;
+        }
+
+            .notification-row.unread:hover {
+                background: #e5f6ef;
+            }
+
+
+    /* =====================================================
+       ICON
+       ===================================================== */
+
+    .notification-row-icon {
+        width: 43px;
+        height: 43px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #e3f5ef;
+        color: #007c5e;
+        font-size: 17px;
+    }
+
+
+    /* =====================================================
+       CONTENT
+       ===================================================== */
+
+    .notification-row-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .notification-row-title {
+        color: #173b32;
+        font-size: 14px;
+        font-weight: 800;
+    }
+
+    .notification-row-text {
+        margin-top: 5px;
+        color: #61756e;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .notification-row-time {
+        margin-top: 7px;
+        color: #98a6a1;
+        font-size: 11px;
+    }
+
+    .unread-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        margin-right: 6px;
+        border-radius: 50%;
+        background: #0aa36c;
+    }
+
+
+    /* =====================================================
+       ACTION
+       ===================================================== */
+
+    .notification-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .btn-open-notification {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        background: #eef7f4;
+        color: #007c5e !important;
+        text-decoration: none !important;
+    }
+
+        .btn-open-notification:hover {
+            background: #dff1eb;
+        }
+
+    .btn-delete-notification {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        border: none;
+        border-radius: 8px;
+        background: #fff0f2;
+        color: #e33d54;
+    }
+
+        .btn-delete-notification:hover {
+            background: #ffe1e6;
+        }
+
+
+    /* =====================================================
+       EMPTY
+       ===================================================== */
+
+    .notification-empty-page {
+        padding: 60px 20px;
+        text-align: center;
+        color: #84968f;
+    }
+
+        .notification-empty-page i {
+            display: block;
+            margin-bottom: 14px;
+            color: #a7bbb4;
+            font-size: 45px;
+        }
+
+        .notification-empty-page strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #536861;
+            font-size: 16px;
+        }
+
+
+    /* =====================================================
+       ALERT
+       ===================================================== */
+
+    .notification-alert {
+        margin-bottom: 18px;
+        padding: 12px 15px;
+        border-radius: 10px;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+       ===================================================== */
+
+    @@media (max-width: 700px) {
+
+        .notification-page-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .notification-summary {
+            flex-direction: column;
+        }
+
+        .notification-row {
+            padding: 15px;
+        }
+
+        .notification-row-icon {
+            display: none;
+        }
+    }
+</style>
+
+
+<div class="notification-page">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="notification-page-header">
+
+        <div class="notification-page-title">
+
+            <h2>
+
+                <i class="fa-solid fa-bell"
+                   style="color:#007c5e; margin-right:8px;">
+                </i>
+
+                Thông Báo
+
+            </h2>
+
+            <p>
+                Theo dõi các hoạt động mới nhất trên tài khoản của bạn.
+            </p>
+
+        </div>
+
+
+        @if (soChuaDoc > 0)
+        {
+            using (Html.BeginForm(
+                "DanhDauTatCaDaDoc",
+                "ThongBao",
+                FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <button type="submit"
+                        class="btn-read-all">
+
+                    <i class="fa-solid fa-check-double"
+                       style="margin-right:5px;">
+                    </i>
+
+                    Đánh dấu tất cả đã đọc
+
+                </button>
+            }
+        }
+
+    </div>
+
+
+    <!-- =====================================================
+         THÔNG BÁO THÀNH CÔNG / LỖI
+         ===================================================== -->
+
+    @if (TempData["ThongBaoSuccess"] != null)
+    {
+        <div class="alert alert-success notification-alert">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            @TempData["ThongBaoSuccess"]
+
+        </div>
+    }
+
+
+    @if (TempData["ThongBaoError"] != null)
+    {
+        <div class="alert alert-danger notification-alert">
+
+            <i class="fa-solid fa-circle-exclamation"></i>
+
+            @TempData["ThongBaoError"]
+
+        </div>
+    }
+
+
+    <!-- =====================================================
+         THỐNG KÊ
+         ===================================================== -->
+
+    <div class="notification-summary">
+
+        <div class="summary-box">
+
+            <div class="summary-label">
+                Tổng thông báo
+            </div>
+
+            <div class="summary-number">
+                @tongThongBao
+            </div>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <div class="summary-label">
+                Chưa đọc
+            </div>
+
+            <div class="summary-number green">
+                @soChuaDoc
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         DANH SÁCH
+         ===================================================== -->
+
+    <div class="notification-list-card">
+
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <div class="notification-row @(item.DaDoc == false ? "unread" : "")">
+
+
+                    <!-- ICON -->
+
+                    <div class="notification-row-icon">
+
+                        <i class="fa-solid fa-bell"></i>
+
+                    </div>
+
+
+                    <!-- NỘI DUNG -->
+
+                    <div class="notification-row-content">
+
+                        <div class="notification-row-title">
+
+                            @if (item.DaDoc == false)
+                            {
+                                <span class="unread-dot"></span>
+                            }
+
+                            @item.TieuDe
+
+                        </div>
+
+
+                        <div class="notification-row-text">
+                            @item.NoiDung
+                        </div>
+
+
+                        <div class="notification-row-time">
+
+                            <i class="fa-regular fa-clock"
+                               style="margin-right:3px;">
+                            </i>
+
+                            @item.NgayTao.ToString("dd/MM/yyyy HH:mm")
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTION -->
+
+                    <div class="notification-actions">
+
+
+                        <!-- MỞ THÔNG BÁO -->
+
+                        <a href="@Url.Action(
+                                     "Xem",
+                                     "ThongBao",
+                                     new
+                                     {
+                                         id = item.MaThongBao
+                                     })"
+                           class="btn-open-notification"
+                           title="Xem thông báo">
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </a>
+
+
+                        <!-- XÓA -->
+
+                        @using (Html.BeginForm(
+                            "Xoa",
+                            "ThongBao",
+                            FormMethod.Post,
+                            new
+                            {
+                                style = "display:inline;"
+                            }))
+                        {
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@item.MaThongBao" />
+
+                            <button type="submit"
+                                    class="btn-delete-notification"
+                                    title="Xóa thông báo"
+                                    onclick="return confirm('Bạn có chắc muốn xóa thông báo này?');">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </button>
+                        }
+
+                    </div>
+
+
+                </div>
+            }
+        }
+        else
+        {
+            <!-- =================================================
+                 KHÔNG CÓ THÔNG BÁO
+                 ================================================= -->
+
+            <div class="notification-empty-page">
+
+                <i class="fa-regular fa-bell-slash"></i>
+
+                <strong>
+                    Chưa có thông báo
+                </strong>
+
+                <span>
+                    Các thông báo mới của bạn sẽ xuất hiện ở đây.
+                </span>
+
+            </div>
+        }
+
+    </div>
+
+</div>

@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.Title = "Đặt Sân Thành Công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="margin-top: 50px; margin-bottom: 50px;">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+
+            <div class="panel panel-success shadow-sm" style="padding: 40px; border-radius: 10px;">
+                <div style="font-size: 70px; color: #5cb85c; margin-bottom: 20px;">
+                    <i class="fa fa-check-circle"></i>
+                </div>
+
+                <h2 class="text-success font-weight-bold" style="margin-bottom: 15px;">
+                    ĐẶT SÂN THÀNH CÔNG!
+                </h2>
+
+                <p class="text-muted" style="font-size: 16px; margin-bottom: 30px;">
+                    Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi. Đơn đặt sân của bạn đã được ghi nhận và đang được hệ thống xử lý.
+                </p>
+
+                <div class="d-flex justify-content-center" style="gap: 15px;">
+                    <a href="@Url.Action("TrangThai", "DatSan")" class="btn btn-success btn-lg" style="margin-right: 10px;">
+                        <i class="fa fa-list"></i> Xem lịch sử đặt sân
+                    </a>
+
+                    <a href="@Url.Action("Index", "DatSan")" class="btn btn-default btn-lg">
+                        <i class="fa fa-futbol-o"></i> Tiếp tục đặt sân khác
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

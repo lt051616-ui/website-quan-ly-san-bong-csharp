@@ -1,0 +1,607 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string vaiTro =
+        Session["VaiTro"] != null
+            ? Session["VaiTro"].ToString()
+            : "";
+
+    bool laAdmin =
+        vaiTro == "Admin";
+
+    ViewBag.Title =
+        laAdmin
+            ? "Quản lý mã giảm giá"
+            : "Mã giảm giá";
+
+    DateTime homNay =
+        DateTime.Today;
+
+
+    // =====================================================
+    // DỮ LIỆU HIỆN TẠI CỦA VIEW
+    // Sau này nếu Controller trả Model thì có thể bỏ phần này.
+    // =====================================================
+
+    DateTime ngayBatDau1 =
+        new DateTime(2026, 9, 1);
+
+    DateTime ngayKetThuc1 =
+        new DateTime(2026, 10, 1);
+
+    DateTime ngayBatDau2 =
+        new DateTime(2026, 9, 1);
+
+    DateTime ngayKetThuc2 =
+        new DateTime(2026, 10, 1);
+
+
+    bool ma1ConHieuLuc =
+        homNay >= ngayBatDau1.Date &&
+        homNay <= ngayKetThuc1.Date;
+
+    bool ma2ConHieuLuc =
+        homNay >= ngayBatDau2.Date &&
+        homNay <= ngayKetThuc2.Date;
+}
+
+
+<style>
+
+    /* =====================================================
+       CARD CHÍNH
+       ===================================================== */
+
+    .card-box {
+        background: white;
+        border-radius: 14px;
+        padding: 26px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .page-header-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 24px;
+    }
+
+        .page-header-title h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 800;
+            color: #173b32;
+        }
+
+    .page-subtitle {
+        margin-top: 7px;
+        color: #7a8e86;
+        font-size: 13px;
+    }
+
+
+    /* =====================================================
+       NÚT THÊM
+       ===================================================== */
+
+    .btn-add-voucher {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: #007c5e;
+        color: white !important;
+        border-radius: 9px;
+        padding: 10px 18px;
+        font-weight: 700;
+        text-decoration: none !important;
+        transition: .2s ease;
+    }
+
+        .btn-add-voucher:hover {
+            background: #005b46;
+            transform: translateY(-1px);
+        }
+
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .voucher-table {
+        margin-bottom: 0;
+    }
+
+        .voucher-table > thead > tr > th {
+            background-color: #f0f6f5;
+            color: #004d3b;
+            border-bottom: none;
+            font-size: 14px;
+            font-weight: 700;
+            vertical-align: middle;
+            padding: 13px 12px;
+        }
+
+        .voucher-table > tbody > tr > td {
+            vertical-align: middle;
+            padding: 14px 12px;
+            color: #28483f;
+        }
+
+    .voucher-code {
+        color: #007c5e;
+        font-weight: 800;
+    }
+
+
+    /* =====================================================
+       TRẠNG THÁI
+       ===================================================== */
+
+    .badge-status-active {
+        display: inline-block;
+        background-color: #dcf7ec;
+        color: #07804f;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .badge-status-expired {
+        display: inline-block;
+        background-color: #fdeaea;
+        color: #d64545;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+
+    /* =====================================================
+       BUTTON THAO TÁC ADMIN
+       ===================================================== */
+
+    .voucher-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        color: white !important;
+        text-decoration: none !important;
+        margin: 0 2px;
+    }
+
+    .voucher-edit {
+        background: #337ab7;
+    }
+
+        .voucher-edit:hover {
+            background: #286090;
+        }
+
+    .voucher-delete {
+        background: #d9534f;
+    }
+
+        .voucher-delete:hover {
+            background: #c9302c;
+        }
+
+
+    /* =====================================================
+       GỢI Ý CHO KHÁCH
+       ===================================================== */
+
+    .customer-note {
+        background: #f0faf6;
+        border: 1px solid #d5eee3;
+        border-left: 4px solid #079b67;
+        border-radius: 9px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+        color: #48665b;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+</style>
+
+
+<div class="card-box">
+
+
+    <!-- =====================================================
+         HEADER
+         ===================================================== -->
+
+    <div class="page-header-title">
+
+        <div>
+
+            <h2>
+
+                <i class="fa-solid fa-gift"
+                   style="
+                       color:#007c5e;
+                       margin-right:8px;">
+                </i>
+
+                @if (laAdmin)
+                {
+                    <span>
+                        Quản Lý Mã Giảm Giá
+                    </span>
+                }
+                else
+                {
+                    <span>
+                        Mã Giảm Giá
+                    </span>
+                }
+
+            </h2>
+
+
+            @if (!laAdmin)
+            {
+                <div class="page-subtitle">
+                    Xem các mã ưu đãi dành cho đơn đặt sân của bạn.
+                </div>
+            }
+
+        </div>
+
+
+        <!-- CHỈ ADMIN ĐƯỢC THÊM -->
+
+        @if (laAdmin)
+        {
+            <a href="@Url.Action("Them", "MaGiamGia")"
+               class="btn-add-voucher">
+
+                <i class="fa-solid fa-plus"></i>
+
+                Thêm Mã Mới
+
+            </a>
+        }
+
+    </div>
+
+
+
+    <!-- =====================================================
+         THÔNG BÁO
+         ===================================================== -->
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success"
+             style="border-radius:8px;">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            @TempData["SuccessMessage"]
+
+        </div>
+    }
+
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger"
+             style="border-radius:8px;">
+
+            <i class="fa-solid fa-circle-exclamation"></i>
+
+            @TempData["ErrorMessage"]
+
+        </div>
+    }
+
+
+
+    <!-- =====================================================
+         GỢI Ý CHO KHÁCH
+         ===================================================== -->
+
+    @if (!laAdmin)
+    {
+        <div class="customer-note">
+
+            <i class="fa-solid fa-circle-info"
+               style="color:#079b67;">
+            </i>
+
+            Bạn có thể sử dụng mã giảm giá khi đặt sân nếu đơn hàng
+            đáp ứng điều kiện tối thiểu và mã vẫn còn hiệu lực.
+
+        </div>
+    }
+
+
+
+    <!-- =====================================================
+         TABLE
+         ===================================================== -->
+
+    <div class="table-responsive">
+
+        <table class="table table-hover voucher-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        STT
+                    </th>
+
+                    <th>
+                        Mã Code
+                    </th>
+
+                    <th>
+                        Giảm Giá
+                    </th>
+
+                    <th>
+                        Đơn Tối Thiểu
+                    </th>
+
+                    <th>
+                        Số Lượng
+                    </th>
+
+                    <th>
+                        Thời Hạn
+                    </th>
+
+                    <th>
+                        Trạng Thái
+                    </th>
+
+
+                    <!-- CHỈ ADMIN THẤY CỘT THAO TÁC -->
+
+                    @if (laAdmin)
+                    {
+                        <th style="text-align:center;">
+                            Thao Tác
+                        </th>
+                    }
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                <!-- =================================================
+                     MÃ 1
+                     ================================================= -->
+
+                <tr>
+
+                    <td>
+                        1
+                    </td>
+
+
+                    <td>
+
+                        <strong class="voucher-code">
+                            GIAM10PCT
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+                        10% (Tối đa 50.000đ)
+                    </td>
+
+
+                    <td>
+                        200.000 đ
+                    </td>
+
+
+                    <td>
+                        100
+                    </td>
+
+
+                    <td>
+
+                        @ngayBatDau1.ToString("dd/MM/yyyy")
+
+                        -
+
+                        @ngayKetThuc1.ToString("dd/MM/yyyy")
+
+                    </td>
+
+
+                    <td>
+
+                        @if (ma1ConHieuLuc)
+                        {
+                            <span class="badge-status-active">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                                Đang hoạt động
+
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-status-expired">
+
+                                <i class="fa-solid fa-clock"></i>
+
+                                Hết hạn
+
+                            </span>
+                        }
+
+                    </td>
+
+
+                    <!-- CHỈ ADMIN THẤY SỬA / XÓA -->
+
+                    @if (laAdmin)
+                    {
+                        <td style="text-align:center;">
+
+                            <a href="#"
+                               class="voucher-action voucher-edit"
+                               title="Sửa">
+
+                                <i class="fa-solid fa-pen-to-square"></i>
+
+                            </a>
+
+
+                            <a href="#"
+                               class="voucher-action voucher-delete"
+                               title="Xóa"
+                               onclick="
+                                   return confirm(
+                                       'Bạn có chắc muốn xóa mã GIAM10PCT?'
+                                   );
+                               ">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </a>
+
+                        </td>
+                    }
+
+                </tr>
+
+
+
+                <!-- =================================================
+                     MÃ 2
+                     ================================================= -->
+
+                <tr>
+
+                    <td>
+                        2
+                    </td>
+
+
+                    <td>
+
+                        <strong class="voucher-code">
+                            TANG50K
+                        </strong>
+
+                    </td>
+
+
+                    <td>
+                        50.000 đ
+                    </td>
+
+
+                    <td>
+                        300.000 đ
+                    </td>
+
+
+                    <td>
+                        50
+                    </td>
+
+
+                    <td>
+
+                        @ngayBatDau2.ToString("dd/MM/yyyy")
+
+                        -
+
+                        @ngayKetThuc2.ToString("dd/MM/yyyy")
+
+                    </td>
+
+
+                    <td>
+
+                        @if (ma2ConHieuLuc)
+                        {
+                            <span class="badge-status-active">
+
+                                <i class="fa-solid fa-circle-check"></i>
+
+                                Đang hoạt động
+
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-status-expired">
+
+                                <i class="fa-solid fa-clock"></i>
+
+                                Hết hạn
+
+                            </span>
+                        }
+
+                    </td>
+
+
+                    @if (laAdmin)
+                    {
+                        <td style="text-align:center;">
+
+                            <a href="#"
+                               class="voucher-action voucher-edit"
+                               title="Sửa">
+
+                                <i class="fa-solid fa-pen-to-square"></i>
+
+                            </a>
+
+
+                            <a href="#"
+                               class="voucher-action voucher-delete"
+                               title="Xóa"
+                               onclick="
+                                   return confirm(
+                                       'Bạn có chắc muốn xóa mã TANG50K?'
+                                   );
+                               ">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </a>
+
+                        </td>
+                    }
+
+                </tr>
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>

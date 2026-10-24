@@ -1,0 +1,358 @@
+﻿@{
+    Layout = null;
+}
+
+<style>
+    .chat-support-btn {
+        position: fixed;
+        right: 25px;
+        bottom: 25px;
+        z-index: 9998;
+        border: 0;
+        border-radius: 999px;
+        padding: 14px 22px;
+        background: #11a957;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        box-shadow: 0 8px 24px rgba(0,0,0,.18);
+        cursor: pointer;
+    }
+
+        .chat-support-btn:hover {
+            background: #0d9149;
+        }
+
+    .chat-panel {
+        display: none;
+        position: fixed;
+        right: 25px;
+        bottom: 90px;
+        width: 390px;
+        height: 600px;
+        max-height: calc(100vh - 120px);
+        z-index: 9999;
+        background: #fff;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 18px 55px rgba(0,0,0,.22);
+        border: 1px solid #e4ece8;
+    }
+
+        .chat-panel.open {
+            display: flex;
+            flex-direction: column;
+        }
+
+    .chat-header {
+        padding: 16px 18px;
+        background: #0b8650;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .chat-header-title {
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    .chat-header-sub {
+        font-size: 12px;
+        opacity: .9;
+        margin-top: 2px;
+    }
+
+    .chat-close {
+        border: 0;
+        background: transparent;
+        color: #fff;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .chat-status {
+        padding: 9px 15px;
+        background: #f3fbf6;
+        color: #426256;
+        border-bottom: 1px solid #e4efe9;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .chat-quick {
+        padding: 10px 12px;
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #edf2ef;
+    }
+
+        .chat-quick button {
+            border: 1px solid #b8e5cb;
+            background: #f8fffb;
+            color: #087e49;
+            border-radius: 999px;
+            padding: 7px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+            .chat-quick button:hover {
+                background: #e6f9ed;
+            }
+
+    .chat-messages {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+        background: #f7faf8;
+    }
+
+    .chat-row {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+        .chat-row.me {
+            justify-content: flex-end;
+        }
+
+        .chat-row.other {
+            justify-content: flex-start;
+        }
+
+    .chat-bubble {
+        max-width: 80%;
+        border-radius: 15px;
+        padding: 10px 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .chat-row.me .chat-bubble {
+        background: #11a957;
+        color: #fff;
+        border-bottom-right-radius: 4px;
+    }
+
+    .chat-row.other .chat-bubble {
+        background: #fff;
+        border: 1px solid #e0e8e4;
+        color: #23342d;
+        border-bottom-left-radius: 4px;
+    }
+
+    .chat-sender {
+        font-size: 10px;
+        opacity: .7;
+        margin-bottom: 3px;
+        font-weight: 700;
+    }
+
+    .chat-time {
+        font-size: 10px;
+        opacity: .65;
+        margin-top: 4px;
+        text-align: right;
+    }
+
+    .chat-input-wrap {
+        padding: 11px;
+        border-top: 1px solid #e6ece9;
+        display: flex;
+        gap: 8px;
+        background: #fff;
+    }
+
+        .chat-input-wrap textarea {
+            flex: 1;
+            resize: none;
+            height: 44px;
+            max-height: 90px;
+            border: 1px solid #bcd8ca;
+            border-radius: 12px;
+            padding: 10px 12px;
+            outline: none;
+        }
+
+    .chat-send {
+        width: 46px;
+        height: 44px;
+        border: 0;
+        border-radius: 12px;
+        background: #11a957;
+        color: #fff;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+        .chat-send:disabled {
+            background: #94d3b2;
+            cursor: not-allowed;
+        }
+
+    @@media(max-width:600px) {
+        .chat-panel {
+            right: 8px;
+            left: 8px;
+            width: auto;
+            bottom: 78px;
+            height: 72vh;
+        }
+
+        .chat-support-btn {
+            right: 15px;
+            bottom: 15px;
+        }
+    }
+</style>
+
+<div id="chatAntiForgery">@Html.AntiForgeryToken()</div>
+
+<button type="button" id="btnMoChat" class="chat-support-btn">
+    <i class="fa fa-comments"></i> Chat hỗ trợ
+</button>
+
+<div id="chatPanel" class="chat-panel">
+    <div class="chat-header">
+        <div>
+            <div class="chat-header-title">⚽ Trợ lý AI & Nhân viên</div>
+            <div class="chat-header-sub">Hỗ trợ đặt sân và giải đáp thắc mắc</div>
+        </div>
+        <button type="button" id="btnDongChat" class="chat-close">×</button>
+    </div>
+
+    <div id="chatTrangThai" class="chat-status">Trạng thái: Trợ lý AI đang hỗ trợ</div>
+
+    <div class="chat-quick">
+        <button type="button" class="chat-quick-question" data-message="Giá sân hiện tại bao nhiêu?">💰 Báo giá sân</button>
+        <button type="button" class="chat-quick-question" data-message="Sân còn trống không?">📅 Sân còn trống?</button>
+        <button type="button" class="chat-quick-question" data-message="Chính sách hủy sân như thế nào?">❌ Chính sách hủy</button>
+        <button type="button" id="btnGapNhanVien">👤 Gặp Nhân viên</button>
+    </div>
+
+    <div id="chatMessages" class="chat-messages"></div>
+
+    <div class="chat-input-wrap">
+        <textarea id="txtChatNoiDung" maxlength="2000" placeholder="Nhập tin nhắn..."></textarea>
+        <button type="button" id="btnGuiChat" class="chat-send"><i class="fa fa-paper-plane"></i></button>
+    </div>
+</div>
+
+<script>
+window.addEventListener('load', function () {
+    if (!window.jQuery) return;
+    var $ = window.jQuery;
+    var urlLayTin = '@Url.Action("LayTinNhanKhachHang", "Chat")';
+    var urlGuiTin = '@Url.Action("GuiTinNhanKhachHang", "Chat")';
+    var urlChuyenNhanVien = '@Url.Action("ChuyenNhanVien", "Chat")';
+    var token = $("#chatAntiForgery input[name='__RequestVerificationToken']").val();
+    var panel = $("#chatPanel");
+    var timerChat = null;
+
+    function enc(v) { return $("<div/>").text(v || "").html(); }
+    function ten(loai) {
+        if (loai === "KhachHang") return "Bạn";
+        if (loai === "NhanVien") return "Nhân viên";
+        return "Trợ lý AI";
+    }
+
+    function render(ds) {
+        var box = $("#chatMessages");
+        var isAtBottom = box[0] ? (box[0].scrollHeight - box.scrollTop() - box.outerHeight() < 50) : true;
+
+        box.empty();
+        $.each(ds || [], function (i, t) {
+            var me = t.loaiNguoiGui === "KhachHang";
+            box.append('<div class="chat-row ' + (me ? 'me' : 'other') + '"><div class="chat-bubble"><div class="chat-sender">' + enc(ten(t.loaiNguoiGui)) + '</div>' + enc(t.noiDung) + '<div class="chat-time">' + enc(t.thoiGianGui) + '</div></div></div>');
+        });
+
+        if (isAtBottom && box[0]) {
+            box.scrollTop(box[0].scrollHeight);
+        }
+    }
+
+    function tai() {
+        $.get(urlLayTin, function (r) {
+            if (!r || !r.success) return;
+            $("#chatTrangThai").text("Trạng thái: " + (r.trangThai || "Trợ lý AI đang hỗ trợ"));
+            render(r.tinNhans);
+        });
+    }
+
+    function gui(noiDung) {
+        noiDung = $.trim(noiDung || "");
+        if (!noiDung) return;
+
+        $("#btnGuiChat").prop("disabled", true);
+        $.ajax({
+            url: urlGuiTin,
+            type: "POST",
+            data: { __RequestVerificationToken: token, noiDung: noiDung },
+            success: function (r) {
+                if (!r || !r.success) {
+                    alert(r && r.message ? r.message : "Không thể gửi tin nhắn.");
+                    return;
+                }
+                $("#txtChatNoiDung").val("");
+                tai();
+            },
+            error: function (xhr, status, error) {
+                // In chi tiết lỗi ra console của trình duyệt để dễ phát hiện nguyên nhân
+                console.error("Lỗi AJAX:", status, error);
+                console.error("Phản hồi từ Server:", xhr.responseText);
+                alert("Lỗi kết nối máy chủ (HTTP " + xhr.status + "). Hãy nhấn F12 chọn tab Console để xem chi tiết.");
+            },
+            complete: function () {
+                $("#btnGuiChat").prop("disabled", false);
+            }
+        });
+    }
+
+    $("#btnMoChat").on("click", function () {
+        panel.addClass("open");
+        tai();
+        if (!timerChat) timerChat = setInterval(tai, 4000);
+    });
+
+    $("#btnDongChat").on("click", function () {
+        panel.removeClass("open");
+        if (timerChat) {
+            clearInterval(timerChat);
+            timerChat = null;
+        }
+    });
+
+    $("#btnGuiChat").on("click", function () {
+        gui($("#txtChatNoiDung").val());
+    });
+
+    $("#txtChatNoiDung").on("keydown", function (e) {
+        if (e.keyCode === 13 && !e.shiftKey) {
+            e.preventDefault();
+            gui($(this).val());
+        }
+    });
+
+    $(".chat-quick-question").on("click", function () {
+        panel.addClass("open");
+        gui($(this).data("message"));
+    });
+
+    $("#btnGapNhanVien").on("click", function () {
+        $.ajax({
+            url: urlChuyenNhanVien,
+            type: "POST",
+            data: { __RequestVerificationToken: token },
+            success: function (r) {
+                if (r && r.success) tai();
+                else alert("Không thể chuyển đến Nhân viên.");
+            }
+        });
+    });
+});
+</script>
